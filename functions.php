@@ -69,15 +69,26 @@ function getPartJSON($table, $fields, $filter)
 	dbconnect();
 	$query = "SELECT ".mysql_real_escape_string($fields)." FROM ".mysql_real_escape_string($table)." WHERE ".mysql_real_escape_string($filter).";";
 	$result = mysql_query($query, $connect);
-	$data = @mysql_fetch_array($result);
 	if($result === false)
 	{
 		return 'There is no such a table';
 	}
 	else
 	{
-		$json_container->append($data);
-		$return = json_encode($json_container);
+		if(mysql_num_rows($result) <= 1)
+		{
+			$data = @mysql_fetch_array($result);
+			$json_container->append($data);
+			$return = json_encode($json_container);
+		}
+		else
+		{
+			while($data = @mysql_fetch_array($result))
+			{
+				$json_container->append($data);
+			}
+			$return = json_encode($json_container);
+		}
 	}
 	dbclose();
 	
