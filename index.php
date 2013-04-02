@@ -98,7 +98,7 @@ if(isset($_POST['loginType'])){
                 <div id="signUp">
 					<div id="signUp_header"><br>Sign Up</div>
                     <div id="signUp_body">
-                    	<form id="FormSignUp" method="post" action="signup.php" data-ajax="false">
+                        <form id="FormSignUp" method="post" action="signup.php" data-ajax="false">
                         <div id="notifier">Notifier</div>
 	                        <input type="text" name="new_firstName" id="new_firstName" data-mini="true" placeholder="Your first name"><input type="text" data-mini="true" id="new_lastName" name="new_lastName" placeholder="Your last name">
 
@@ -211,8 +211,25 @@ if(isset($_POST['loginType'])){
 <?php
 /* displayes errors */
 if(isset($_SESSION['error'])){
-	echo("<script>$('#notification_main').html('".$_SESSION['error']."').show();</script>");
+	echo("<script>
+	$('#notification_main').removeClass('success');
+	$('#notification_main').html('".$_SESSION['error']."').show();
+	setTimeout(function(){
+		$('#notification_main').fadeOut(300);
+	}, 2000);
+	</script>");
 	unset($_SESSION['error']);
+}
+if(isset($_SESSION['success'])){
+	echo("<script>
+	$('#notification_main').addClass('success');
+	$('#notification_main').html('".$_SESSION['success']."').show();
+	setTimeout(function(){
+		$('#notification_main').fadeOut(300);
+	}, 2000);
+	</script>");
+
+	unset($_SESSION['success']);
 }
 ?>
 <script>
@@ -254,6 +271,11 @@ $(document).ready(function(){
 		if($(this).val() == 'Type in keywords here'){
 			$(this).css({'color': '#000000'}).val('');
 		}
+	});
+	
+	/* logo title */
+	$('#logotitle').click(function(){
+		location.href="index.php";
 	});
 	
 	/* popup context menu handlers */

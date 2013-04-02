@@ -23,11 +23,11 @@ if($_GET['loginType'] == 1){ // OpenID Login
 			}
 		} else {
 			if($openid->mode == 'cancel') {
-				$errormsg = "You have canceled authentication.";
-				error_log('Google-Cancel');
+				$_SESSION['error'] = "You have canceled authentication.";
+				header("Location: index.php");
 			} else if ( ! $openid->validate() ) {
-				$errormsg = 'You were not logged in by Google.';
-				error_log('Google-Fail');
+				$_SESSION['error'] = "You were not logged in by Google.";
+				header("Location: index.php");
 			} else {
 				$password = $openid->identity;
 				$attributes = $openid->getAttributes();
@@ -110,10 +110,11 @@ if($_GET['loginType'] == 1){ // OpenID Login
 		//$_SESSION['avatarPic'] = $avatarPic;
 		
 		unset($_SESSION['keepSignedIn']);
+		$_SESSION['success'] = "Hello ".$firstName."!";
 		header("Location: index.php");
 		
 	}else{
-		$_SESSION['error'] = "OpenID failed!";
+		$_SESSION['error'] = "Internal error: OpenID verification information is corrupt!";
 		header("Location: index.php");
 	}
 } else if($_GET['loginType'] == 2){
@@ -128,7 +129,7 @@ if($_GET['loginType'] == 1){ // OpenID Login
 		
 		$result = mysql_query($query, $connect);
 		if(!$result){
-			$_SESSION['error'] = "New account does not exist!";
+			$_SESSION['error'] = "Internal error: account does not exist!";
 			header("Location: index.php");
 		}else{
 			$data = mysql_fetch_array($result);
@@ -142,7 +143,7 @@ if($_GET['loginType'] == 1){ // OpenID Login
 		header("Location: index.php");
 	}else{
 		if(!$_SESSION['inputEmail'] || !$_SESSION['inputPw']){
-			$_SESSION['error'] = "Credential data was not properly sent!";
+			$_SESSION['error'] = "Internal error: credential data was not properly sent!";
 			header("Location: index.php");
 		}else{
 			$inputEmail = mysql_real_escape_string($_SESSION['inputEmail']);
@@ -160,12 +161,12 @@ if($_GET['loginType'] == 1){ // OpenID Login
 			}else{
 				if(mysql_num_rows($result) < 1){
 					//ERROR MESSAGE
-					$_SESSION['error'] = "This account does not exist!";
+					$_SESSION['error'] = "Account does not exist!";
 					header("Location: index.php");
 				}else{
 					$data = mysql_fetch_array($result);
 					if($data['userPw'] != $inputPw){
-						$_SESSION['error'] = "You entered an incorrect password!";
+						$_SESSION['error'] = "Incorrect password!";
 						header("Location: index.php");
 						dbclose();
 					}else{
@@ -182,6 +183,7 @@ if($_GET['loginType'] == 1){ // OpenID Login
 							setcookie($CFG->cookiename, $encCookie, time() + 86400 * 30);
 						}
 						
+						$_SESSION['success'] = "Hello ".$data['firstName']."!";
 						header("Location: index.php");
 					}
 				}

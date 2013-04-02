@@ -44,17 +44,29 @@ body {
 
 .top_nav ul li:hover {
 	background-color: #728293;
+	box-shadow: inset 0px 1px 5px 1px #4E5B6B;
 }
 
 #notification_main {
 	float: left;
 	display: none;
+	text-align: center;
+	font-size: 18px;
+	font-weight: bold;
+	color: #C00;
+	border: 1px solid #C00;
 	position: absolute;
 	top: 45px;
 	width: 100%;
 	padding: 10px;
 	height: 25px;
-	background-color: #FC3;
+	background-color: #FFE7A5;
+}
+
+#notification_main.success {
+	background-color: #E4F2E0;
+	color: #4F985B;
+	border: 1px solid #4F985B;
 }
 
 .main_layout {
@@ -77,6 +89,7 @@ body {
 	text-shadow: 0 2px 0 #fff;
 	color: #455F7B;
 	font-weight: bold;
+	cursor: pointer;
 }
 
 #logoheader {
@@ -138,15 +151,15 @@ input#keyword {
 
 .mostList ul li {
 	height: 20px;
-	background-color: #F0F7FA;
+	background-color: #EBEBEB;
 	text-align: left;
 	color: #000;
 	padding-left: 15px;
 	padding-top: 5px;
 	padding-bottom: 5px;
-	border-bottom: solid 1px #fff;
-	border-left: solid 1px #fff;
-	border-right: solid 1px #fff;
+	border-bottom: solid 1px #ccc;
+	border-left: solid 1px #ccc;
+	border-right: solid 1px #ccc;
 }
 
 .mostList ul li:hover {
@@ -175,8 +188,8 @@ input#keyword {
 	display: inline-block;
 	width: 449px;
 	height: 120px;
-	background-color: #F0F7FA;
-	border: solid 1px #fff;
+	background-color: #EBEBEB;
+	border: solid 1px #ccc;
 	top: 60px;
 }
 
@@ -262,28 +275,35 @@ input#keyword {
 	background-color: #728293;
 	border-top-left-radius: 10px;
 	border-top-right-radius: 10px;
+	z-index:5;
 }
 
 #signUp_body {
 	position: relative;
 	text-align: center;
 	width: 398px;
-	height: 240px;
-	padding: 10px;
+	top: -100px;
+	height: 235px;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 102px;
+	padding-bottom: 10px;
 	background-color: #ffffff;
-	border-bottom-left-radius: 10px;
-	border-bottom-right-radius: 10px;
+	border-radius: 10px;
 	border: solid 1px #728293;
+	box-shadow: 0 3px 10px 2px #333333;
 }
 
 #signUp_body #notifier {
 	display: none;
 	width: 388px;
-	height: 30px;
+	height: 25px;
 	font-size: 14px;
+	font-weight: bold;
 	color: #C00;
 	text-align: center;
 	background-color: #FFE7A5;
+	border: 1px solid #C00;
 	border-radius: 10px;
 	padding-left: 5px;
 	padding-right: 5px;
