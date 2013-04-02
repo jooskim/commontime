@@ -107,7 +107,7 @@ if(isset($_POST['loginType'])){
 						<input type="password" data-mini="true" id="new_Pw" name="new_Pw" placeholder="Set your password">
                         <input type="password" data-mini="true" id="new_Pw_verify" name="new_Pw_verify" placeholder="Enter your password again">
                         <input type="hidden" name="loginType" value=2>
-                        <input type="submit" id="FSU_submit" value="Sign up" ><input type="button" value="Cancel" onclick='$("#signUp").hide();'>
+                        <input type="submit" id="FSU_submit" value="Sign up" ><input type="button" value="Cancel" onclick='$("#signUp").fadeOut(300);'>
                         </form>
                     </div>
 				</div>
@@ -134,7 +134,7 @@ if(isset($_POST['loginType'])){
 								<label for="keepSignedInN">Keep me signed in</label>
                     	        <input type="hidden" name="loginType" value=2> <!-- value 1 for openID Login, value 2 for traditional Login -->
 								<div data-role="fieldcontain">
-									<input type="button" id="normal_signin" value="Sign in"><input type="button" id="normal_signup" value="Sign up"><input type="button" id="normal_help" value="Help!">
+									<input type="submit" id="normal_signin" value="Sign in"><input type="button" id="normal_signup" value="Sign up"><input type="button" id="normal_help" value="Help!">
 									
 									
 								</div>
@@ -324,12 +324,13 @@ $(document).ready(function(){
 		$('#Form_keepSigned').submit();
 	});
 	
-	$('#normal_signin').click(function(){
-		$('#Form_keepSignedN').submit();
+	$('#Form_keepSignedN').submit(function(e){
+		$(this).submit();
+		e.preventDefault();
 	});
 	
 	$('#normal_signup').click(function(){
-		$('#signUp').show();
+		$('#signUp').fadeIn(300);
 		$('#loginWindowN').hide();
 	});
 	

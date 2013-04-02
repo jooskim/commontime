@@ -138,6 +138,15 @@ if($_GET['loginType'] == 1){ // OpenID Login
 			$_SESSION['lastName'] = $data['lastName'];
 			$_SESSION['userEmail'] = $data['userEmail'];
 			$_SESSION['level'] = $data['level'];
+			
+			// update the last access time
+			$query = "UPDATE CT_User SET lastAccess = NOW() WHERE id = ".$data['id'].";";
+			$result = mysql_query($query, $connect);
+			if(!$result){
+				$_SESSION['error'] = "DB update (field: lastAccess) error!";
+			}else{
+				$_SESSION['success'] = 'Hello '.$data['firstName'].'!';
+			}
 		}
 		dbclose();
 		header("Location: index.php");
@@ -175,7 +184,7 @@ if($_GET['loginType'] == 1){ // OpenID Login
 						$_SESSION['lastName'] = $data['lastName'];
 						$_SESSION['userEmail'] = $data['userEmail'];
 						$_SESSION['level'] = $data['level'];
-						dbclose();
+						
 						
 						if(isset($keepSignedIn) && $keepSignedIn == 1){
 							$guid = $data['userPw'];
@@ -183,7 +192,15 @@ if($_GET['loginType'] == 1){ // OpenID Login
 							setcookie($CFG->cookiename, $encCookie, time() + 86400 * 30);
 						}
 						
-						$_SESSION['success'] = "Hello ".$data['firstName']."!";
+						// update the last access time
+						$query = "UPDATE CT_User SET lastAccess = NOW() WHERE id = ".$data['id'].";";
+						$result = mysql_query($query, $connect);
+						if(!$result){
+							$_SESSION['error'] = "DB update (field: lastAccess) error!";
+						}else{
+							$_SESSION['success'] = "Hello ".$data['firstName']."!";
+						}
+						dbclose();
 						header("Location: index.php");
 					}
 				}
