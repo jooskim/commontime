@@ -46,6 +46,17 @@ body {
 	background-color: #728293;
 }
 
+#notification_main {
+	float: left;
+	display: none;
+	position: absolute;
+	top: 45px;
+	width: 100%;
+	padding: 10px;
+	height: 25px;
+	background-color: #FC3;
+}
+
 .main_layout {
 	position: absolute;
 	top: 50px;
@@ -83,7 +94,7 @@ body {
 
 .t2 {
 	position: relative;
-	top: 2px;
+	top: 3px;
 	display: inline-block;
 }
 
@@ -97,7 +108,7 @@ body {
 
 .t3 {
 	position: relative;
-	top: 3px;
+	top: 4px;
 	display: inline-block;
 }
 
@@ -182,4 +193,100 @@ input#keyword {
 	border-bottom: solid 1px #fff;
 	padding-top: 7px;
 	padding-left: 15px;
+}
+
+/* Login window */
+#loginWindow {
+	position: absolute;
+	display: none;
+	padding: 5px;
+	top: 39px;
+	right: 77px;
+	background-color: rgba(255,255,255,1);
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+	border: 1px solid #A1B3C3;
+	width: 144px;
+	text-align: center;
+	height: 25px;
+	z-index: 1;
+
+}
+
+#loginWindow #formComponents {
+	width: 100%;
+	height: 100%;
+}
+
+#loginWindowN {
+	position: absolute;
+	display: none;
+	padding: 5px;
+	top: 39px;
+	right: 56px;
+	background-color: rgba(255,255,255,1);
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+	border: 1px solid #A1B3C3;
+	width: 250px;
+	text-align: center;
+	height: 160px;
+	z-index: 1;
+
+}
+
+#loginWindowN #formComponentsN {
+	width: 100%;
+	height: 100%;
+}
+
+#signUp {
+	position: absolute;
+	top: 100px;
+	display: none;
+	float: left;
+	padding: 10px;
+	width: 400px;
+	height: 400px;
+	z-index: 3;
+}
+
+#signUp_header {
+	position: relative;
+	font-size: 36px;
+	color: #ffffff;
+	text-shadow: 0 1px 0 #000;
+	width: 100%;
+	height: 80px;
+	padding: 10px;
+	background-color: #728293;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+}
+
+#signUp_body {
+	position: relative;
+	text-align: center;
+	width: 398px;
+	height: 240px;
+	padding: 10px;
+	background-color: #ffffff;
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+	border: solid 1px #728293;
+}
+
+#signUp_body #notifier {
+	display: none;
+	width: 388px;
+	height: 30px;
+	font-size: 14px;
+	color: #C00;
+	text-align: center;
+	background-color: #FFE7A5;
+	border-radius: 10px;
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-top: 10px;
+	
 }
