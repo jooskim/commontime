@@ -45,51 +45,55 @@ if(!isset($_SESSION['primaryId']) && isset($_COOKIE[$CFG->cookiename]) && isset(
 	}
 }
 
-// finds out which login mode is used and send appropriate parameters to login.php
-if(isset($_GET['loginType'])){
-	$loginType = $_GET['loginType'];
-	if($_GET['loginType'] == 1){
-		if(isset($_GET['keepSignedIn'])){
-			 $kSI = $_GET['keepSignedIn'];
-		}else{
-			$kSI = 0;
-		}
-	}
-	echo("<script>location.href='login.php?loginType=".$loginType."&keepSignedIn=".$kSI."';</script>");
-}
-if(isset($_POST['loginType'])){
-	$loginType = $_POST['loginType'];
-	if($_POST['loginType'] == 2){
-		if(isset($_POST['keepSignedInN'])){
-			$kSI = $_POST['keepSignedInN'];
-		}else{
-			$kSI = 0;
-		}
-	}
-	$_SESSION['inputEmail'] = $_POST['userEmail'];
-	$_SESSION['inputPw'] = md5($_POST['userPw']);
-	echo("<script>location.href='login.php?loginType=".$loginType."&keepSignedIn=".$kSI."';</script>");
-}
-
 ?>
-
-<!doctype html>
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta charset="UTF-8">
-<title>Common Time - Sharing the worlds' public domain music</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <script src="./assets/libraries/jquery-1.9.1.min.js"></script>
 <script src="http://code.jquery.com/mobile/1.3.0/jquery.mobile-1.3.0.min.js"></script>
 <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
 <script src="./ct.js"></script>
+<script src="assets/libraries/select/select2.js"></script>
 <link href='http://fonts.googleapis.com/css?family=Kotta+One|Raleway:400|Average' rel='stylesheet' type='text/css'/>
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" />
 <link rel="stylesheet" href="./assets/style.css">
+<link rel="stylesheet" href="./assets/libraries/select/select2.css">
 <link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.0/jquery.mobile-1.3.0.min.css" />
-
+<?php
+// look for default parameters
+if(isset($_POST['isSearch']) && $_POST['isSearch']==1){
+	$docTitle = "Search results for "; // SEARCH TERM COMES HERE!
+	
+	// search and retrieve data with given parameters
+	
+}else{
+	$docTitle = "Browse music scores";
+	// retrieve all data by default
+	echo('
+		<script>
+		$.ajax({
+			url: "retrieve.php",
+			data: {"mode": 0 },
+			success: function(data){
+				jdata = eval("("+data+")");
+				
+				$("#numAll").text(jdata[1]["scoreNum"]); // all
+				$("#numGenre").text(jdata[1]["genreNum"]); // genre
+				$("#numComp").text(jdata[1]["composerNum"]); // composer
+				$("#numCompYear").text(jdata[1]["composeYearNum"]); // compose year
+				$("#numPubYear").text(jdata[1]["publishYearNum"]); // publishe year
+				$("#numInst").text(jdata[1]["instrumentationNum"]); // instrumentation
+			}
+		});
+		</script>
+	');
+}
+?>
+<title><?=$docTitle;?></title>
 </head>
-<body>
 
+<body>
 <div class="page">
 	<div class="top_nav">
     	<div class="topmenus">
@@ -155,53 +159,38 @@ if(isset($_POST['loginType'])){
         <div id="notification_main"></div>
     </div>
     <div class="main_layout">
-    	<div class="main_center">
-    		<span id="logotitle">
-        	Common Time</span><br><span id="logoheader">Sharing the world's public domain music<br><br></span>
-            
-            <form id="searchForm" method="get" data-ajax="false" >
-            	<div class="t1">
-            	<select id="srchType" data-inline="true" data-corners="false">
+	    <div class="main_left">
+    	    <div class="catList">
+        	    <span class="catListHeader">Browse scores by</span>
+	           	<ul>
+	               	<li>All (<span id="numAll"></span>)</li>
+	                <li>Genre (<span id="numGenre"></span>)</li>
+	                <li>Composer (<span id="numComp"></span>)</li>
+	                <li>Compose year (<span id="numCompYear"></span>)</li>
+	                <li>Publish year (<span id="numPubYear"></span>)</li>
+                    <li>Instrumentation (<span id="numInst"></span>)</li>
+	            </ul>
+	        </div> 
+	    </div>
+        <div class="main_right">
+        	<div class="srchbox">
+	            <div id="category" data-role="fieldcontain">
+            	<select data-inline="true" id="srchType"  class="cat">
                     <option value="all">All</option>
                 	<option value="genre">Genre</option>
                     <option value="genre">Composer</option>
                     <option value="genre">Tag</option>
             	</select>
                 </div>
-                <div class="t2">
-                	<input data-inline="true" type="text" id="keyword" name="keyword" value="Type in keywords here">
+                <div id="textinput" data-role="fieldcontain">
+	                <input data-inline="true" type="text" id="keyword" name="keyword" value="Type in keywords here" class="keyword">
+    	            <a data-role="button" onclick="alert('submit function')" id="submit">Search</a>
                 </div>
-                <div class="t3">
-                    <a data-role="button" onclick="alert('submit function')" id="submit">Search</a>
-                </div>
-            </form>
-            <br>
-            <div class="mostList" id="pop">
-            	<span class="mostListHeader">Most Popular</span>
-                <ul>
-                	<li>(temp) browse.php</li>
-                    <li>t2</li>
-                    <li>t3</li>
-                    <li>t4</li>
-                    <li>t5</li>
-                </ul>
             </div>
-            <div class="mostList" id="rec">
-            	<span class="mostListHeader">Most Recent</span>
-            	<ul>
-                	<li>t1</li>
-                    <li>t2</li>
-                    <li>t3</li>
-                    <li>t4</li>
-                    <li>t5</li>
-                </ul>
-            </div>
-            <br><div class="tagList">
-            	<span class="tagListHeader">Tags</span>
-            	
+            <div class="itemList">
+            items appear here
             </div>
         </div>
-        
     </div>
     <div class="footer">
     
@@ -264,16 +253,14 @@ $(window).resize(function(){
 	signUpWidth = parseInt(signUpWidth);
 	signUpHeight = parseInt(signUpHeight);
 	$('#signUp').css({'right': ((window.innerWidth - signUpWidth-50)/2)+'px', 'top': ((window.innerHeight - signUpHeight)/2)+'px'});
+	
+	/* added in browser.php */
+	$('.main_right').css('width', (innerWidth - 317)+'px');
+	$('.srchbox #textinput').css({'width': (innerWidth - 500)+'px'});
+	$('.srchbox #textinput .ui-input-text').css({'width': (innerWidth - 625)+'px'});
 });
 
 $(document).ready(function(){
-	//// TEMP ////
-	$('#pop ul li').click(function(){
-		location.href='browse.php';
-	});
-	$('#pop ul li').css('cursor', 'pointer');
-	///
-	
 	$('#keyword').click(function(){
 		if($(this).val() == 'Type in keywords here'){
 			$(this).css({'color': '#000000'}).val('');
@@ -297,7 +284,7 @@ $(document).ready(function(){
 			$('#loginWindow').show();
 		});
 		
-		$('.main_layout').mouseenter(function(){
+		$('.top_nav').mouseleave(function(){
 			$('#loginWindow').hide();
 		});
 	});
@@ -312,7 +299,7 @@ $(document).ready(function(){
 			$('#loginWindowN').show();
 		});
 		
-		$('.main_layout').mouseenter(function(){
+		$('.top_nav').mouseleave(function(){
 			$('#loginWindowN').hide();
 		});
 	});
@@ -324,6 +311,12 @@ $(document).ready(function(){
 	signUpWidth = parseInt(signUpWidth);
 	signUpHeight = parseInt(signUpHeight);
 	$('#signUp').css({'right': ((window.innerWidth - signUpWidth-50)/2)+'px', 'top': ((window.innerHeight - signUpHeight)/2)+'px'});
+	
+	/* added in browser.php */
+	$('.main_right').css('width', (innerWidth - 317)+'px');
+	$('.srchbox #textinput').css({'width': (innerWidth - 500)+'px'});
+	$('.srchbox #textinput .ui-input-text').css({'width': (innerWidth - 625)+'px'});
+
 	
 	/* sign in/up and help event handlers */
 	
@@ -354,6 +347,5 @@ $(document).ready(function(){
 	
 });
 </script>
-
 </body>
 </html>
