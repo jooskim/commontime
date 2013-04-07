@@ -61,33 +61,31 @@ if(!isset($_SESSION['primaryId']) && isset($_COOKIE[$CFG->cookiename]) && isset(
 <link rel="stylesheet" href="./assets/libraries/select/select2.css">
 <link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.0/jquery.mobile-1.3.0.min.css" />
 <?php
+
 // look for default parameters
-if(isset($_POST['isSearch']) && $_POST['isSearch']==1){
-	$docTitle = "Search results for "; // SEARCH TERM COMES HERE!
+if(isset($_GET['keyword'])){
+	$srchType = $_GET['srchType'];
+	$keyword = $_GET['keyword'];
+	$docTitle = "Search results for ".htmlentities($keyword); // SEARCH TERM COMES HERE!
+	
 	
 	// search and retrieve data with given parameters
+	dbconnect();
+	if($srchType != 'tag'){
+		$fetchQuery = "SELECT * FROM CT_Score WHERE ".mysql_real_escape_string($srchType)." LIKE '%".mysql_real_escape_string($keyword)."%' LIMIT 0, 10;";
+	}else if($srchType == 'tag'){
+		$fetchQuery = "SELECT * FROM CT_ScoreTag WHERE tag LIKE '%".mysql_real_escape_string($keyword)."%' LIMIT 0, 10;";
+	}
+	$fetchResult = mysql_query($fetchQuery, $connect);
 	
 }else{
 	$docTitle = "Browse music scores";
-	// retrieve all data by default
-	echo('
-		<script>
-		$.ajax({
-			url: "retrieve.php",
-			data: {"mode": 0 },
-			success: function(data){
-				jdata = eval("("+data+")");
-				
-				$("#numAll").text(jdata[1]["scoreNum"]); // all
-				$("#numGenre").text(jdata[1]["genreNum"]); // genre
-				$("#numComp").text(jdata[1]["composerNum"]); // composer
-				$("#numCompYear").text(jdata[1]["composeYearNum"]); // compose year
-				$("#numPubYear").text(jdata[1]["publishYearNum"]); // publishe year
-				$("#numInst").text(jdata[1]["instrumentationNum"]); // instrumentation
-			}
-		});
-		</script>
-	');
+	
+	// gets the 10 items and display on the display
+	dbconnect();
+	$fetchQuery = "SELECT * FROM CT_Score LIMIT 0, 10;";
+	$fetchResult = mysql_query($fetchQuery, $connect);
+	
 }
 ?>
 <title><?=$docTitle;?></title>
@@ -96,6 +94,9 @@ if(isset($_POST['isSearch']) && $_POST['isSearch']==1){
 <body>
 <div class="page">
 	<div class="top_nav">
+    	<div class="logo_top" onclick="location.href='index.php';">
+        	Common Time
+        </div>
     	<div class="topmenus">
         	<ul>
             	<li>About</li>
@@ -121,7 +122,7 @@ if(isset($_POST['isSearch']) && $_POST['isSearch']==1){
 							<li id="loginW">Sign in via Google</li>
 			                <div id="loginWindow">
 		                	<div id="formComponents">
-        	                <form id="Form_keepSigned" method="get" data-ajax="false">
+        	                <form id="Form_keepSigned" action="index.php" method="get" data-ajax="false">
                 	        	<input type="checkbox" name="keepSignedIn" value=1 id="keepSignedIn" data-role="none">
                     	        <input type="hidden" name="loginType" value=1> <!-- value 1 for openID Login, value 2 for traditional Login -->
                         		<label for="keepSignedIn">Keep me signed in</label>
@@ -132,7 +133,7 @@ if(isset($_POST['isSearch']) && $_POST['isSearch']==1){
 							<li id="loginWN">Sign in</li>
 			                <div id="loginWindowN">
 		                	<div id="formComponentsN">
-        	                <form id="Form_keepSignedN" method="post" data-ajax="false">
+        	                <form id="Form_keepSignedN" action="index.php" method="post" data-ajax="false">
 								<input type="text" name="userEmail" placeholder="Email"><input type="password" placeholder="Password" name="userPw">
                 	        	<input type="checkbox" name="keepSignedInN" value=1 id="keepSignedInN" data-role="none">
 								<label for="keepSignedInN">Keep me signed in</label>
@@ -163,32 +164,115 @@ if(isset($_POST['isSearch']) && $_POST['isSearch']==1){
     	    <div class="catList">
         	    <span class="catListHeader">Browse scores by</span>
 	           	<ul>
-	               	<li>All (<span id="numAll"></span>)</li>
-	                <li>Genre (<span id="numGenre"></span>)</li>
-	                <li>Composer (<span id="numComp"></span>)</li>
-	                <li>Compose year (<span id="numCompYear"></span>)</li>
-	                <li>Publish year (<span id="numPubYear"></span>)</li>
-                    <li>Instrumentation (<span id="numInst"></span>)</li>
+	               	<li id="br_all">All (<span id="numAll"></span>)</li>
+	                <li id="br_genre"><a href="#" onclick="$('.subGenre').toggle();">+</a> Genre (<span id="numGenre"></span>)</li>
+                    <?php
+					dbconnect();
+					$query_Cat = "SELECT * FROM CT_Genre;";
+					$result_Cat = mysql_query($query_Cat, $connect);
+					while($data = mysql_fetch_array($result_Cat)){
+						$query_scoresOfSubcat = "SELECT COUNT(*) FROM CT_Score WHERE genre = '".$data["genre"]."';";
+						$result_scoresOfSubcat = mysql_query($query_scoresOfSubcat, $connect);
+						$numOfScoresOfSubcat = mysql_fetch_array($result_scoresOfSubcat);
+						echo('<li class="subGenre">'.htmlentities($data["genre"]).' ('.$numOfScoresOfSubcat[0].')</li>');
+					}
+					dbclose();
+					?>
+	                <li id="br_composer"><a href="#" onclick="$('.subComposer').toggle();">+</a> Composer (<span id="numComp"></span>)</li>
+                    <?php
+					dbconnect();
+					$query_Cat = "SELECT composer FROM CT_Score WHERE composer IS NOT NULL;";
+					$result_Cat = mysql_query($query_Cat, $connect);
+					while($data = mysql_fetch_array($result_Cat)){
+						$query_scoresOfSubcat = "SELECT COUNT(*) FROM CT_Score WHERE composer = '".$data["composer"]."';";
+						$result_scoresOfSubcat = mysql_query($query_scoresOfSubcat, $connect);
+						$numOfScoresOfSubcat = mysql_fetch_array($result_scoresOfSubcat);
+						echo('<li class="subComposer">'.htmlentities($data["composer"]).' ('.$numOfScoresOfSubcat[0].')</li>');
+					}
+					dbclose();
+					?>
+	                <li id="br_composeyear"><a href="#" onclick="$('.subComposeYear').toggle();">+</a> Compose year (<span id="numCompYear"></span>)</li>
+                    <?php
+					dbconnect();
+					$query_Cat = "SELECT composeYear FROM CT_Score WHERE composeYear IS NOT NULL;";
+					$result_Cat = mysql_query($query_Cat, $connect);
+					while($data = mysql_fetch_array($result_Cat)){
+						$query_scoresOfSubcat = "SELECT COUNT(*) FROM CT_Score WHERE composeYear = '".$data["composeYear"]."';";
+						$result_scoresOfSubcat = mysql_query($query_scoresOfSubcat, $connect);
+						$numOfScoresOfSubcat = mysql_fetch_array($result_scoresOfSubcat);
+						echo('<li class="subComposeYear">'.htmlentities($data["composeYear"]).' ('.$numOfScoresOfSubcat[0].')</li>');
+					}
+					dbclose();
+					?>
+	                <li id="br_publishyear"><a href="#" onclick="$('.subPublishYear').toggle();">+</a> Publish year (<span id="numPubYear"></span>)</li>
+                    <?php
+					dbconnect();
+					$query_Cat = "SELECT publishYear FROM CT_Score WHERE publishYear IS NOT NULL;";
+					$result_Cat = mysql_query($query_Cat, $connect);
+					while($data = mysql_fetch_array($result_Cat)){
+						$query_scoresOfSubcat = "SELECT COUNT(*) FROM CT_Score WHERE publishYear = '".$data["publishYear"]."';";
+						$result_scoresOfSubcat = mysql_query($query_scoresOfSubcat, $connect);
+						$numOfScoresOfSubcat = mysql_fetch_array($result_scoresOfSubcat);
+						echo('<li class="subPublishYear">'.htmlentities($data["publishYear"]).' ('.$numOfScoresOfSubcat[0].')</li>');
+					}
+					dbclose();
+					?>
+                    <li id="br_instrumentation"><a href="#" onclick="$('.subInstrumentation').toggle();">+</a> Instrumentation (<span id="numInst"></span>)</li>
+                    <?php
+					dbconnect();
+					$query_Cat = "SELECT * FROM CT_Instrumentation;";
+					$result_Cat = mysql_query($query_Cat, $connect);
+					while($data = mysql_fetch_array($result_Cat)){
+						$query_scoresOfSubcat = "SELECT COUNT(*) FROM CT_Score WHERE instrumentation = '".$data["instrumentation"]."';";
+						$result_scoresOfSubcat = mysql_query($query_scoresOfSubcat, $connect);
+						$numOfScoresOfSubcat = mysql_fetch_array($result_scoresOfSubcat);
+						echo('<li class="subInstrumentation">'.htmlentities($data["instrumentation"]).' ('.$numOfScoresOfSubcat[0].')</li>');
+					}
+					dbclose();
+					?>
 	            </ul>
 	        </div> 
 	    </div>
         <div class="main_right">
         	<div class="srchbox">
 	            <div id="category" data-role="fieldcontain">
-            	<select data-inline="true" id="srchType"  class="cat">
-                    <option value="all">All</option>
+                <select data-inline="true" id="srchType"  class="cat">
+                    <option value="title">Title</option>
                 	<option value="genre">Genre</option>
-                    <option value="genre">Composer</option>
-                    <option value="genre">Tag</option>
+                    <option value="composer">Composer</option>
+                    <option value="tag">Tag</option>
             	</select>
                 </div>
                 <div id="textinput" data-role="fieldcontain">
 	                <input data-inline="true" type="text" id="keyword" name="keyword" value="Type in keywords here" class="keyword">
-    	            <a data-role="button" onclick="alert('submit function')" id="submit">Search</a>
+    	            <a data-role="button" id="submit">Search</a>
                 </div>
             </div>
             <div class="itemList">
-            items appear here
+            	<?php
+				while($data = mysql_fetch_array($fetchResult)){
+					$numOfResults = mysql_num_rows($fetchResult);
+					if($numOfResults > 0){
+						echo('
+							<div class="scoreEntity">
+                				<img src="assets/images/defaultalbumart.jpg" class="albumArt" />
+		                   	<div class="textInfo">
+		                   	 	<span class="title">'.htmlentities($data["title"]).'</span><br />
+		                        <span class="key">Composer</span><span class="value">'.htmlentities($data["composer"]).'</span><br /> <!-- composer -->
+		                        <span class="key">Genre</span><span class="value">'.htmlentities($data["genre"]).'</span><br /> <!-- genre -->
+		                        <span class="key">Compose year</span><span class="value">'.htmlentities($data["composeYear"]).'</span><br /> <!-- compose year -->
+		                        <span class="key">Publish year</span><span class="value">'.htmlentities($data["publishYear"]).'</span><br /> <!-- publish year -->
+		                        <span class="key">Instrumentation</span><span class="value">'.htmlentities($data["instrumentation"]).'</span><br /> <!-- instrumentation -->
+		                        <span class="key">Opus number</span><span class="value">'.htmlentities($data["opusNum"]).'</span><br /> <!-- opusnum -->
+		                        <span class="key">Uploaded by</span><span class="value">'.htmlentities($data["uploadedBy"]).'</span><br /> <!-- uploaded by -->
+		                    </div>
+		                </div>
+						');
+					}else {
+					}
+				}
+				?>
+	            
             </div>
         </div>
     </div>
@@ -219,6 +303,15 @@ if(isset($_SESSION['success'])){
 	</script>");
 
 	unset($_SESSION['success']);
+}
+
+if(isset($_GET['keyword'])){
+	echo("
+		<script>
+		$('#keyword').css('color', '#000000');
+		$('#srchType').val('".$_GET['srchType']."');
+		$('#keyword').val('".$_GET['keyword']."');</script>
+	");
 }
 ?>
 <script>
@@ -258,9 +351,25 @@ $(window).resize(function(){
 	$('.main_right').css('width', (innerWidth - 317)+'px');
 	$('.srchbox #textinput').css({'width': (innerWidth - 500)+'px'});
 	$('.srchbox #textinput .ui-input-text').css({'width': (innerWidth - 625)+'px'});
+	$('.main_right .textInfo').css({'width': (innerWidth - 500)+'px'});
 });
 
 $(document).ready(function(){
+	// retrieve the number of all data implemented
+		$.ajax({
+			url: "retrieve.php",
+			data: {"mode": 0 },
+			success: function(data){
+				jdata = eval("("+data+")");		
+				$("#numAll").text(jdata[0]["scoreNum"]); // all
+				$("#numGenre").text(jdata[0]["genreNum"]); // genre
+				$("#numComp").text(jdata[0]["composerNum"]); // composer
+				$("#numCompYear").text(jdata[0]["composeYearNum"]); // compose year
+				$("#numPubYear").text(jdata[0]["publishYearNum"]); // publishe year
+				$("#numInst").text(jdata[0]["instrumentationNum"]); // instrumentation
+			}
+		});
+	
 	$('#keyword').click(function(){
 		if($(this).val() == 'Type in keywords here'){
 			$(this).css({'color': '#000000'}).val('');
@@ -316,6 +425,7 @@ $(document).ready(function(){
 	$('.main_right').css('width', (innerWidth - 317)+'px');
 	$('.srchbox #textinput').css({'width': (innerWidth - 500)+'px'});
 	$('.srchbox #textinput .ui-input-text').css({'width': (innerWidth - 625)+'px'});
+	$('.main_right .textInfo').css({'width': (innerWidth - 500)+'px'});
 
 	
 	/* sign in/up and help event handlers */
@@ -337,7 +447,13 @@ $(document).ready(function(){
 	$('#userPanel').click(function(){
 		location.href='logout.php';
 	});
-
+	
+	$('#submit').click(function(){
+		var srchType = $('#srchType').val();
+		var keyword = $('#keyword').val();
+		location.href="browse.php?srchType="+srchType+"&keyword="+keyword;
+	});
+	
 	// on keydown on the keyword area, initiate the tag retrieval process, and once the process is done, launch the autocomplete process
 	
 	// test

@@ -1,10 +1,25 @@
 @charset "UTF-8";
 /* CSS Document */
 
+a {
+	text-decoration: none;
+}
+
 body {
 	margin: 0px;
 	font-family: Helvetica, Arial;
 	font-size: 12px;
+}
+.logo_top {
+	position: absolute;
+	float: left;
+	font-size: 20px;
+	padding-left: 15px;
+	padding-top: 10px;
+	font-weight: bold;
+	color: #ffffff;
+	text-shadow: 0 2px #4E6A86;
+	cursor: pointer;
 }
 
 .top_nav {
@@ -105,7 +120,6 @@ body {
 .main_right .itemList {
 	position: relative;
 	top: -10px;
-	background-color: #999;
 }
 
 #logotitle {
@@ -242,7 +256,6 @@ input#keyword {
 	height: 120px;
 	background-color: #EBEBEB;
 	border: solid 1px #ccc;
-	top: 60px;
 }
 
 .tagList .tagListHeader {
@@ -287,12 +300,53 @@ input#keyword {
 	border-bottom: solid 1px #ddd;
 	border-left: solid 1px #ddd;
 	border-right: solid 1px #ddd;
+	cursor: pointer;
 }
 
 .catList ul li:hover {
 	background-color: #aaaaaa;
 	text-shadow: 0 1px 0 #000;
 	color: #fff;
+}
+
+.catList ul li.subGenre {
+	background-color: #FFFFFF;
+	text-align: left;
+	color: #000;
+	padding-left: 30px;
+	display: none;
+}
+
+.catList ul li.subComposer {
+	background-color: #FFFFFF;
+	text-align: left;
+	color: #000;
+	padding-left: 30px;
+	display: none;
+}
+
+.catList ul li.subComposeYear {
+	background-color: #FFFFFF;
+	text-align: left;
+	color: #000;
+	padding-left: 30px;
+	display: none;
+}
+
+.catList ul li.subPublishYear {
+	background-color: #FFFFFF;
+	text-align: left;
+	color: #000;
+	padding-left: 30px;
+	display: none;
+}
+
+.catList ul li.subInstrumentation {
+	background-color: #FFFFFF;
+	text-align: left;
+	color: #000;
+	padding-left: 30px;
+	display: none;
 }
 
 .catList .catListHeader {
@@ -411,4 +465,51 @@ input#keyword {
 	padding-right: 5px;
 	padding-top: 10px;
 	
+}
+
+.scoreEntity {
+	width: 99%;
+	height: 180px;
+	background-color: #ebebeb;
+	display: block;
+	margin-top: 5px;
+}
+
+.scoreEntity:hover {
+	background-color: #e0e0e0;
+}
+
+.scoreEntity .albumArt {
+	float: left;
+	margin-left: 15px;
+	margin-top: 10px;
+	
+}
+
+.textInfo {
+	position: relative;
+	text-align: left;
+	left: 15px;
+	top: 10px;
+	width: 70%;
+	height: 130px;
+	
+}
+
+.textInfo .title {
+	font-size: 18px;
+	color: #455F7B;
+	font-weight: bold;
+	line-height: 25px;
+}
+
+.textInfo .key {
+	display: inline-block;
+	width: 120px;
+	color: #455F7B;
+	line-height: 18px;
+}
+
+.textInfo .value {
+	line-height: 18px;
 }

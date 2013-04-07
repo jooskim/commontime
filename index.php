@@ -117,7 +117,7 @@ if(isset($_POST['loginType'])){
 							<li id="loginW">Sign in via Google</li>
 			                <div id="loginWindow">
 		                	<div id="formComponents">
-        	                <form id="Form_keepSigned" method="get" data-ajax="false">
+        	                <form id="Form_keepSigned" action="index.php" method="get" data-ajax="false">
                 	        	<input type="checkbox" name="keepSignedIn" value=1 id="keepSignedIn" data-role="none">
                     	        <input type="hidden" name="loginType" value=1> <!-- value 1 for openID Login, value 2 for traditional Login -->
                         		<label for="keepSignedIn">Keep me signed in</label>
@@ -128,7 +128,7 @@ if(isset($_POST['loginType'])){
 							<li id="loginWN">Sign in</li>
 			                <div id="loginWindowN">
 		                	<div id="formComponentsN">
-        	                <form id="Form_keepSignedN" method="post" data-ajax="false">
+        	                <form id="Form_keepSignedN" action="index.php" method="post" data-ajax="false">
 								<input type="text" name="userEmail" placeholder="Email"><input type="password" placeholder="Password" name="userPw">
                 	        	<input type="checkbox" name="keepSignedInN" value=1 id="keepSignedInN" data-role="none">
 								<label for="keepSignedInN">Keep me signed in</label>
@@ -159,41 +159,47 @@ if(isset($_POST['loginType'])){
     		<span id="logotitle">
         	Common Time</span><br><span id="logoheader">Sharing the world's public domain music<br><br></span>
             
-            <form id="searchForm" method="get" data-ajax="false" >
+            <form id="searchForm" method="get" action="browse.php" data-ajax="false" >
             	<div class="t1">
-            	<select id="srchType" data-inline="true" data-corners="false">
-                    <option value="all">All</option>
+            	<select id="srchType" name="srchType" data-inline="true" data-corners="false">
+                    <option value="title">Title</option>
                 	<option value="genre">Genre</option>
-                    <option value="genre">Composer</option>
-                    <option value="genre">Tag</option>
+                    <option value="composer">Composer</option>
+                    <option value="tag">Tag</option>
             	</select>
                 </div>
                 <div class="t2">
                 	<input data-inline="true" type="text" id="keyword" name="keyword" value="Type in keywords here">
                 </div>
                 <div class="t3">
-                    <a data-role="button" onclick="alert('submit function')" id="submit">Search</a>
+                    <a data-role="button" onclick="$('#searchForm').submit()" id="submit">Search</a>
                 </div>
             </form>
             <br>
             <div class="mostList" id="pop">
             	<span class="mostListHeader">Most Popular</span>
                 <ul>
-                	<li>(temp) browse.php</li>
-                    <li>t2</li>
-                    <li>t3</li>
-                    <li>t4</li>
-                    <li>t5</li>
+                	<?php
+					dbconnect();
+					$query = "SELECT title FROM CT_Score ORDER BY id DESC;";
+					$result = mysql_query($query, $connect);
+					while($data=mysql_fetch_array($result)){
+						echo('<li>'.htmlentities($data['title']).'</li>');
+					}
+					?>
                 </ul>
             </div>
             <div class="mostList" id="rec">
             	<span class="mostListHeader">Most Recent</span>
             	<ul>
-                	<li>t1</li>
-                    <li>t2</li>
-                    <li>t3</li>
-                    <li>t4</li>
-                    <li>t5</li>
+                	<?php
+					dbconnect();
+					$query = "SELECT title FROM CT_Score ORDER BY id DESC;";
+					$result = mysql_query($query, $connect);
+					while($data=mysql_fetch_array($result)){
+						echo('<li>'.htmlentities($data['title']).'</li>');
+					}
+					?>
                 </ul>
             </div>
             <br><div class="tagList">
@@ -268,10 +274,10 @@ $(window).resize(function(){
 
 $(document).ready(function(){
 	//// TEMP ////
-	$('#pop ul li').click(function(){
+	$('#pop ul li:first').click(function(){
 		location.href='browse.php';
 	});
-	$('#pop ul li').css('cursor', 'pointer');
+	$('#pop ul li:first').css('cursor', 'pointer');
 	///
 	
 	$('#keyword').click(function(){
