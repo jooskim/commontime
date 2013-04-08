@@ -276,7 +276,7 @@ if(isset($_GET['keyword'])){
             	</select>
                 </div>
                 <div id="textinput" data-role="fieldcontain">
-	                <input data-inline="true" type="text" id="keyword" name="keyword" value="Type in keywords here" class="keyword">
+	                <input data-inline="true" type="text" id="keyword" name="keyword" placeholder="Type in keywords here" class="keyword">
     	            <a data-role="button" id="submit">Search</a>
                 </div>
             </div>
@@ -410,12 +410,13 @@ $(document).ready(function(){
 				$("#numInst").text(jdata[0]["instrumentationNum"]); // instrumentation
 			}
 		});
-	
+	/*
 	$('#keyword').click(function(){
 		if($(this).val() == 'Type in keywords here'){
 			$(this).css({'color': '#000000'}).val('');
 		}
 	});
+	*/
 	
 	/* logo title */
 	$('#logotitle').click(function(){
