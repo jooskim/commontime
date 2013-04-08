@@ -240,7 +240,7 @@ if(isset($_SESSION['success'])){
 ?>
 <script>
 // should be exported to a separate JS file
-var availableTags, signUpWidth;
+var signUpWidth;
 
 $('#FSU_submit').click(function(e){
 	var firstName = $('#new_firstName').val();
@@ -273,6 +273,7 @@ $(window).resize(function(){
 });
 
 $(document).ready(function(){
+	var availableTags = [];
 	//// TEMP ////
 	$('#pop ul li:first').click(function(){
 		location.href='browse.php';
@@ -350,13 +351,37 @@ $(document).ready(function(){
 	$('#userPanel').click(function(){
 		location.href='logout.php';
 	});
-
-	// on keydown on the keyword area, initiate the tag retrieval process, and once the process is done, launch the autocomplete process
 	
-	// test
+		
+	$('#keyword').keyup(function(){
+		$.ajax({
+			async: false,
+			url: 'retrieve.php',
+			data: {'mode': 1, 'srchType': $('#srchType').val(), 'keyword': $('#keyword').val()},
+			success: function(data){
+				availableTags = [];
+				var jdata = eval("("+data+")");
+				for(var i in jdata){
+					availableTags.push(jdata[i][0]);
+				}
+			}
+		});
+	});
+	
+$(document).ajaxSuccess(function(){
 	$('#keyword').autocomplete({
 		source: availableTags
 	});
+});
+	// on keydown on the keyword area, initiate the tag retrieval process, and once the process is done, launch the autocomplete process
+	
+	// test
+	/*
+	$('#keyword').autocomplete({
+		source: availableTags,
+		
+	});
+	*/
 	
 });
 </script>

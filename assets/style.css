@@ -304,9 +304,9 @@ input#keyword {
 }
 
 .catList ul li:hover {
-	background-color: #aaaaaa;
-	text-shadow: 0 1px 0 #000;
-	color: #fff;
+	background-color: #dfdfdf;
+	text-shadow: 0 1px 0 #fff;
+	color: #000;
 }
 
 .catList ul li.subGenre {
@@ -317,12 +317,20 @@ input#keyword {
 	display: none;
 }
 
+.catList ul li.subGenre:hover {
+	background-color: #dfdfdf;
+}
+
 .catList ul li.subComposer {
 	background-color: #FFFFFF;
 	text-align: left;
 	color: #000;
 	padding-left: 30px;
 	display: none;
+}
+
+.catList ul li.subComposer:hover {
+	background-color: #dfdfdf;
 }
 
 .catList ul li.subComposeYear {
@@ -333,6 +341,10 @@ input#keyword {
 	display: none;
 }
 
+.catList ul li.subComposeYear:hover {
+	background-color: #dfdfdf;
+}
+
 .catList ul li.subPublishYear {
 	background-color: #FFFFFF;
 	text-align: left;
@@ -341,12 +353,20 @@ input#keyword {
 	display: none;
 }
 
+.catList ul li.subPublishYear:hover {
+	background-color: #dfdfdf;
+}
+
 .catList ul li.subInstrumentation {
 	background-color: #FFFFFF;
 	text-align: left;
 	color: #000;
 	padding-left: 30px;
 	display: none;
+}
+
+.catList ul li.subInstrumentation:hover {
+	background-color: #dfdfdf;
 }
 
 .catList .catListHeader {
@@ -470,13 +490,14 @@ input#keyword {
 .scoreEntity {
 	width: 99%;
 	height: 180px;
-	background-color: #ebebeb;
+	background-color: #e7e7e7;
 	display: block;
 	margin-top: 5px;
+	cursor: pointer;
 }
 
 .scoreEntity:hover {
-	background-color: #e0e0e0;
+	background-color: #dfdfdf;
 }
 
 .scoreEntity .albumArt {

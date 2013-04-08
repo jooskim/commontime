@@ -66,15 +66,47 @@ if(!isset($_SESSION['primaryId']) && isset($_COOKIE[$CFG->cookiename]) && isset(
 if(isset($_GET['keyword'])){
 	$srchType = $_GET['srchType'];
 	$keyword = $_GET['keyword'];
-	$docTitle = "Search results for ".htmlentities($keyword); // SEARCH TERM COMES HERE!
+	if($_GET['keyword'] != ''){
+		$docTitle = "Search results for ".htmlentities($keyword);
+	}else{
+		$docTitle = "Browse music scores";
+	}
 	
 	
 	// search and retrieve data with given parameters
 	dbconnect();
 	if($srchType != 'tag'){
-		$fetchQuery = "SELECT * FROM CT_Score WHERE ".mysql_real_escape_string($srchType)." LIKE '%".mysql_real_escape_string($keyword)."%' LIMIT 0, 10;";
+		if($srchType == 'genre'){
+			$tempQuery = "SELECT id FROM CT_Genre WHERE genre LIKE '%".mysql_real_escape_string($keyword)."%';";
+			$tempResult = mysql_query($tempQuery, $connect);
+			$fetchQuery = "SELECT * FROM CT_Score WHERE ";
+		
+			while($tempData = mysql_fetch_array($tempResult)){
+				$fetchQuery .= "genre = ".$tempData['id']." OR ";
+			}
+			if(mysql_num_rows($tempResult) == 0){
+				$fetchQuery = "SELECT id FROM CT_Score WHERE 0;";
+			}else{
+				$fetchQuery = substr($fetchQuery, 0, strlen($fetchQuery)-3);
+				$fetchQuery .= ";";
+			}
+		}else{
+			$fetchQuery = "SELECT * FROM CT_Score WHERE ".mysql_real_escape_string($srchType)." LIKE '%".mysql_real_escape_string($keyword)."%' LIMIT 0, 10;";
+		}
 	}else if($srchType == 'tag'){
-		$fetchQuery = "SELECT * FROM CT_ScoreTag WHERE tag LIKE '%".mysql_real_escape_string($keyword)."%' LIMIT 0, 10;";
+		$tempQuery = "SELECT DISTINCT refScore FROM CT_ScoreTag WHERE tag LIKE '%".mysql_real_escape_string($keyword)."%';";
+		$tempResult = mysql_query($tempQuery, $connect);
+		$fetchQuery = "SELECT * FROM CT_Score WHERE ";
+		
+		while($tempData = mysql_fetch_array($tempResult)){
+			$fetchQuery .= "id = ".$tempData['refScore']." OR ";
+		}
+		if(mysql_num_rows($tempResult) == 0){
+			$fetchQuery = "SELECT id FROM CT_Score WHERE 0;";
+		}else{
+			$fetchQuery = substr($fetchQuery, 0, strlen($fetchQuery)-3);
+			$fetchQuery .= ";";
+		}
 	}
 	$fetchResult = mysql_query($fetchQuery, $connect);
 	
@@ -165,20 +197,20 @@ if(isset($_GET['keyword'])){
         	    <span class="catListHeader">Browse scores by</span>
 	           	<ul>
 	               	<li id="br_all">All (<span id="numAll"></span>)</li>
-	                <li id="br_genre"><a href="#" onclick="$('.subGenre').toggle();">+</a> Genre (<span id="numGenre"></span>)</li>
+	                <li id="br_genre" onclick="$('.subGenre').toggle();">Genre (<span id="numGenre"></span>)</li>
                     <?php
 					dbconnect();
 					$query_Cat = "SELECT * FROM CT_Genre;";
 					$result_Cat = mysql_query($query_Cat, $connect);
 					while($data = mysql_fetch_array($result_Cat)){
-						$query_scoresOfSubcat = "SELECT COUNT(*) FROM CT_Score WHERE genre = '".$data["genre"]."';";
+						$query_scoresOfSubcat = "SELECT COUNT(*) FROM CT_Score WHERE genre = '".$data["id"]."';";
 						$result_scoresOfSubcat = mysql_query($query_scoresOfSubcat, $connect);
 						$numOfScoresOfSubcat = mysql_fetch_array($result_scoresOfSubcat);
-						echo('<li class="subGenre">'.htmlentities($data["genre"]).' ('.$numOfScoresOfSubcat[0].')</li>');
+						echo('<li class="subGenre" onclick=location.href="browse.php?srchType=genre&keyword='.$data["genre"].'">'.htmlentities($data["genre"]).' ('.$numOfScoresOfSubcat[0].')</li>');
 					}
 					dbclose();
 					?>
-	                <li id="br_composer"><a href="#" onclick="$('.subComposer').toggle();">+</a> Composer (<span id="numComp"></span>)</li>
+	                <li id="br_composer" onclick="$('.subComposer').toggle();">Composer (<span id="numComp"></span>)</li>
                     <?php
 					dbconnect();
 					$query_Cat = "SELECT composer FROM CT_Score WHERE composer IS NOT NULL;";
@@ -187,11 +219,11 @@ if(isset($_GET['keyword'])){
 						$query_scoresOfSubcat = "SELECT COUNT(*) FROM CT_Score WHERE composer = '".$data["composer"]."';";
 						$result_scoresOfSubcat = mysql_query($query_scoresOfSubcat, $connect);
 						$numOfScoresOfSubcat = mysql_fetch_array($result_scoresOfSubcat);
-						echo('<li class="subComposer">'.htmlentities($data["composer"]).' ('.$numOfScoresOfSubcat[0].')</li>');
+						echo('<li class="subComposer" onclick=location.href="browse.php?srchType=composer&keyword='.$data["composer"].'">'.htmlentities($data["composer"]).' ('.$numOfScoresOfSubcat[0].')</li>');
 					}
 					dbclose();
 					?>
-	                <li id="br_composeyear"><a href="#" onclick="$('.subComposeYear').toggle();">+</a> Compose year (<span id="numCompYear"></span>)</li>
+	                <li id="br_composeyear" onclick="$('.subComposeYear').toggle();">Compose year (<span id="numCompYear"></span>)</li>
                     <?php
 					dbconnect();
 					$query_Cat = "SELECT composeYear FROM CT_Score WHERE composeYear IS NOT NULL;";
@@ -204,7 +236,7 @@ if(isset($_GET['keyword'])){
 					}
 					dbclose();
 					?>
-	                <li id="br_publishyear"><a href="#" onclick="$('.subPublishYear').toggle();">+</a> Publish year (<span id="numPubYear"></span>)</li>
+	                <li id="br_publishyear" onclick="$('.subPublishYear').toggle();">Publish year (<span id="numPubYear"></span>)</li>
                     <?php
 					dbconnect();
 					$query_Cat = "SELECT publishYear FROM CT_Score WHERE publishYear IS NOT NULL;";
@@ -217,7 +249,7 @@ if(isset($_GET['keyword'])){
 					}
 					dbclose();
 					?>
-                    <li id="br_instrumentation"><a href="#" onclick="$('.subInstrumentation').toggle();">+</a> Instrumentation (<span id="numInst"></span>)</li>
+                    <li id="br_instrumentation" onclick="$('.subInstrumentation').toggle();">Instrumentation (<span id="numInst"></span>)</li>
                     <?php
 					dbconnect();
 					$query_Cat = "SELECT * FROM CT_Instrumentation;";
@@ -252,6 +284,15 @@ if(isset($_GET['keyword'])){
             	<?php
 				while($data = mysql_fetch_array($fetchResult)){
 					$numOfResults = mysql_num_rows($fetchResult);
+					
+					// only for genre data
+					dbconnect();
+					$genre_Query = "SELECT genre FROM CT_Genre WHERE id = ".$data['genre'];
+					$genre_Result = mysql_query($genre_Query, $connect);
+					$genreData = mysql_fetch_array($genre_Result);
+					$data['genre'] = $genreData[0];
+					dbclose();
+					
 					if($numOfResults > 0){
 						echo('
 							<div class="scoreEntity">
@@ -454,12 +495,31 @@ $(document).ready(function(){
 		location.href="browse.php?srchType="+srchType+"&keyword="+keyword;
 	});
 	
-	// on keydown on the keyword area, initiate the tag retrieval process, and once the process is done, launch the autocomplete process
+	$('#keyword').keyup(function(){
+		$.ajax({
+			async: false,
+			url: 'retrieve.php',
+			data: {'mode': 1, 'srchType': $('#srchType').val(), 'keyword': $('#keyword').val()},
+			success: function(data){
+				availableTags = [];
+				var jdata = eval("("+data+")");
+				for(var i in jdata){
+					availableTags.push(jdata[i][0]);
+				}
+			}
+		});
+	});
 	
-	// test
+	/* category links */
+	$('#br_all').click(function(){
+		location.href='browse.php';
+	});
+	
+$(document).ajaxSuccess(function(){
 	$('#keyword').autocomplete({
 		source: availableTags
 	});
+});
 	
 });
 </script>
