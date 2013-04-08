@@ -165,6 +165,9 @@ if(isset($_POST['loginType'])){
                     <option value="title">Title</option>
                 	<option value="genre">Genre</option>
                     <option value="composer">Composer</option>
+                    <option value="composeYear">Compose year</option>
+                    <option value="publishYear">Publish year</option>
+                    <option value="instrumentation">Instrumentation</option>
                     <option value="tag">Tag</option>
             	</select>
                 </div>

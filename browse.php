@@ -91,7 +91,19 @@ if(isset($_GET['keyword'])){
 				$fetchQuery .= ";";
 			}
 		}else{
-			$fetchQuery = "SELECT * FROM CT_Score WHERE ".mysql_real_escape_string($srchType)." LIKE '%".mysql_real_escape_string($keyword)."%' LIMIT 0, 10;";
+			if($srchType == 'instrumentation'){
+				$tempQuery = "SELECT id FROM CT_Instrumentation WHERE instrumentation = '".mysql_real_escape_string($keyword)."';";
+				$tempResult = mysql_query($tempQuery, $connect);
+				$tempData = mysql_fetch_array($tempResult);
+				if(mysql_num_rows($tempResult) > 0){
+					$fetchQuery = "SELECT * FROM CT_Score WHERE instrumentation = ".mysql_real_escape_string($tempData['id']).";";
+				}else{
+					$fetchQuery = "SELECT id FROM CT_Score WHERE 0;";
+				}
+
+			}else{
+				$fetchQuery = "SELECT * FROM CT_Score WHERE ".mysql_real_escape_string($srchType)." LIKE '%".mysql_real_escape_string($keyword)."%' LIMIT 0, 10;";
+			}
 		}
 	}else if($srchType == 'tag'){
 		$tempQuery = "SELECT DISTINCT refScore FROM CT_ScoreTag WHERE tag LIKE '%".mysql_real_escape_string($keyword)."%';";
@@ -232,7 +244,7 @@ if(isset($_GET['keyword'])){
 						$query_scoresOfSubcat = "SELECT COUNT(*) FROM CT_Score WHERE composeYear = '".$data["composeYear"]."';";
 						$result_scoresOfSubcat = mysql_query($query_scoresOfSubcat, $connect);
 						$numOfScoresOfSubcat = mysql_fetch_array($result_scoresOfSubcat);
-						echo('<li class="subComposeYear">'.htmlentities($data["composeYear"]).' ('.$numOfScoresOfSubcat[0].')</li>');
+						echo('<li class="subComposeYear" onclick=location.href="browse.php?srchType=composeYear&keyword='.$data["composeYear"].'">'.htmlentities($data["composeYear"]).' ('.$numOfScoresOfSubcat[0].')</li>');
 					}
 					dbclose();
 					?>
@@ -245,7 +257,7 @@ if(isset($_GET['keyword'])){
 						$query_scoresOfSubcat = "SELECT COUNT(*) FROM CT_Score WHERE publishYear = '".$data["publishYear"]."';";
 						$result_scoresOfSubcat = mysql_query($query_scoresOfSubcat, $connect);
 						$numOfScoresOfSubcat = mysql_fetch_array($result_scoresOfSubcat);
-						echo('<li class="subPublishYear">'.htmlentities($data["publishYear"]).' ('.$numOfScoresOfSubcat[0].')</li>');
+						echo('<li class="subPublishYear" onclick=location.href="browse.php?srchType=publishYear&keyword='.$data["publishYear"].'">'.htmlentities($data["publishYear"]).' ('.$numOfScoresOfSubcat[0].')</li>');
 					}
 					dbclose();
 					?>
@@ -258,7 +270,7 @@ if(isset($_GET['keyword'])){
 						$query_scoresOfSubcat = "SELECT COUNT(*) FROM CT_Score WHERE instrumentation = '".$data["instrumentation"]."';";
 						$result_scoresOfSubcat = mysql_query($query_scoresOfSubcat, $connect);
 						$numOfScoresOfSubcat = mysql_fetch_array($result_scoresOfSubcat);
-						echo('<li class="subInstrumentation">'.htmlentities($data["instrumentation"]).' ('.$numOfScoresOfSubcat[0].')</li>');
+						echo('<li class="subInstrumentation" onclick=location.href="browse.php?srchType=instrumentation&keyword='.$data["instrumentation"].'">'.htmlentities($data["instrumentation"]).' ('.$numOfScoresOfSubcat[0].')</li>');
 					}
 					dbclose();
 					?>
@@ -272,6 +284,9 @@ if(isset($_GET['keyword'])){
                     <option value="title">Title</option>
                 	<option value="genre">Genre</option>
                     <option value="composer">Composer</option>
+                    <option value="composeYear">Compose year</option>
+                    <option value="publishYear">Publish year</option>
+                    <option value="instrumentation">Instrumentation</option>
                     <option value="tag">Tag</option>
             	</select>
                 </div>
@@ -390,8 +405,8 @@ $(window).resize(function(){
 	
 	/* added in browser.php */
 	$('.main_right').css('width', (innerWidth - 317)+'px');
-	$('.srchbox #textinput').css({'width': (innerWidth - 500)+'px'});
-	$('.srchbox #textinput .ui-input-text').css({'width': (innerWidth - 625)+'px'});
+	$('.srchbox #textinput').css({'width': (innerWidth - 530)+'px'});
+	$('.srchbox #textinput .ui-input-text').css({'width': (innerWidth - 665)+'px'});
 	$('.main_right .textInfo').css({'width': (innerWidth - 500)+'px'});
 });
 
@@ -465,8 +480,8 @@ $(document).ready(function(){
 	
 	/* added in browser.php */
 	$('.main_right').css('width', (innerWidth - 317)+'px');
-	$('.srchbox #textinput').css({'width': (innerWidth - 500)+'px'});
-	$('.srchbox #textinput .ui-input-text').css({'width': (innerWidth - 625)+'px'});
+	$('.srchbox #textinput').css({'width': (innerWidth - 530)+'px'});
+	$('.srchbox #textinput .ui-input-text').css({'width': (innerWidth - 665)+'px'});
 	$('.main_right .textInfo').css({'width': (innerWidth - 500)+'px'});
 
 	
