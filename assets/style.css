@@ -10,6 +10,16 @@ body {
 	font-family: Helvetica, Arial;
 	font-size: 12px;
 }
+
+#bg {
+	float: right;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	background: url('images/bg2.png') top right no-repeat;
+
+}
+
 .logo_top {
 	position: absolute;
 	float: left;
@@ -294,7 +304,7 @@ input#keyword {
 
 .catList ul li {
 	height: 20px;
-	background-color: #EBEBEB;
+	background-color: rgba(245,245,245,0.9);
 	text-align: left;
 	color: #000;
 	padding-left: 15px;
@@ -307,13 +317,13 @@ input#keyword {
 }
 
 .catList ul li:hover {
-	background-color: #dfdfdf;
+	background-color: rgba(225,225,225,0.9);
 	text-shadow: 0 1px 0 #fff;
 	color: #000;
 }
 
 .catList ul li.subGenre {
-	background-color: #FFFFFF;
+	background-color: rgba(255,255,255,0.95);
 	text-align: left;
 	color: #000;
 	padding-left: 30px;
@@ -321,11 +331,11 @@ input#keyword {
 }
 
 .catList ul li.subGenre:hover {
-	background-color: #dfdfdf;
+	background-color: rgba(225,225,225,0.95);
 }
 
 .catList ul li.subComposer {
-	background-color: #FFFFFF;
+	background-color: rgba(255,255,255,0.95);
 	text-align: left;
 	color: #000;
 	padding-left: 30px;
@@ -333,11 +343,11 @@ input#keyword {
 }
 
 .catList ul li.subComposer:hover {
-	background-color: #dfdfdf;
+	background-color: rgba(225,225,225,0.95);
 }
 
 .catList ul li.subComposeYear {
-	background-color: #FFFFFF;
+	background-color: rgba(255,255,255,0.95);
 	text-align: left;
 	color: #000;
 	padding-left: 30px;
@@ -345,11 +355,11 @@ input#keyword {
 }
 
 .catList ul li.subComposeYear:hover {
-	background-color: #dfdfdf;
+	background-color: rgba(225,225,225,0.95);
 }
 
 .catList ul li.subPublishYear {
-	background-color: #FFFFFF;
+	background-color: rgba(255,255,255,0.95);
 	text-align: left;
 	color: #000;
 	padding-left: 30px;
@@ -357,11 +367,11 @@ input#keyword {
 }
 
 .catList ul li.subPublishYear:hover {
-	background-color: #dfdfdf;
+	background-color: rgba(225,225,225,0.95);
 }
 
 .catList ul li.subInstrumentation {
-	background-color: #FFFFFF;
+	background-color: rgba(255,255,255,0.95);
 	text-align: left;
 	color: #000;
 	padding-left: 30px;
@@ -369,7 +379,7 @@ input#keyword {
 }
 
 .catList ul li.subInstrumentation:hover {
-	background-color: #dfdfdf;
+	background-color: rgba(225,225,225,0.95);;
 }
 
 .catList .catListHeader {
@@ -493,14 +503,15 @@ input#keyword {
 .scoreEntity {
 	width: 99%;
 	height: 180px;
-	background-color: #e7e7e7;
+	background-color: rgba(245,245,245,0.8);
 	display: block;
 	margin-top: 5px;
+	border: solid 1px #cccccc;
 	cursor: pointer;
 }
 
 .scoreEntity:hover {
-	background-color: #dfdfdf;
+	background-color: rgba(225,225,225,0.8);
 }
 
 .scoreEntity .albumArt {

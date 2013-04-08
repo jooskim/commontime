@@ -136,6 +136,8 @@ if(isset($_GET['keyword'])){
 </head>
 
 <body>
+<div id="bg"></div>
+
 <div class="page">
 	<div class="top_nav">
     	<div class="logo_top" onclick="location.href='index.php';">

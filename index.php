@@ -91,6 +91,7 @@ if(isset($_POST['loginType'])){
 <body>
 
 <div class="page">
+<div id="bg"></div>
 	<div class="top_nav">
     	<div class="topmenus">
         	<ul>
