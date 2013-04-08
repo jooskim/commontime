@@ -169,7 +169,7 @@ if(isset($_POST['loginType'])){
             	</select>
                 </div>
                 <div class="t2">
-                	<input data-inline="true" type="text" id="keyword" name="keyword" value="Type in keywords here">
+                	<input data-inline="true" type="text" id="keyword" name="keyword" placeholder="Type in keywords here">
                 </div>
                 <div class="t3">
                     <a data-role="button" onclick="$('#searchForm').submit()" id="submit">Search</a>
@@ -204,7 +204,16 @@ if(isset($_POST['loginType'])){
             </div>
             <br><div class="tagList">
             	<span class="tagListHeader">Tags</span>
-            	
+            	<?php
+				dbconnect();
+				$queryTags = "SELECT tag FROM CT_ScoreTag;";
+				$resultTags = mysql_query($queryTags, $connect);
+				$tagCounter = 0;
+				while($dataTags = mysql_fetch_array($resultTags)){
+					echo("<span class='tags' data-link='browse.php?srchType=tag&keyword=".$dataTags['tag']."'>".htmlentities($dataTags['tag'])."</span>");
+					$tagCounter++;
+				}
+				?>
             </div>
         </div>
         
@@ -281,11 +290,13 @@ $(document).ready(function(){
 	$('#pop ul li:first').css('cursor', 'pointer');
 	///
 	
+	/*
 	$('#keyword').click(function(){
 		if($(this).val() == 'Type in keywords here'){
 			$(this).css({'color': '#000000'}).val('');
 		}
 	});
+	*/
 	
 	/* logo title */
 	$('#logotitle').click(function(){
@@ -352,7 +363,10 @@ $(document).ready(function(){
 		location.href='logout.php';
 	});
 	
-		
+	$('.tags').click(function(){
+		location.href=$(this).attr('data-link');
+	});
+	
 	$('#keyword').keyup(function(){
 		$.ajax({
 			async: false,
