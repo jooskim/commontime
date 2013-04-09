@@ -716,6 +716,10 @@ input#keyword {
 	cursor: pointer;
 }
 
+.commentArea .revoke:hover {
+	background-color: #cfcfcf;
+}
+
 #scoreimg {
 	float: right;
 	position: relative;

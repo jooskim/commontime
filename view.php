@@ -26,7 +26,7 @@ dbclose();
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>Untitled Document</title>
+<title></title>
 <script src="./assets/libraries/jquery-1.9.1.min.js"></script>
 <script src="http://code.jquery.com/mobile/1.3.0/jquery.mobile-1.3.0.min.js"></script>
 <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
@@ -238,7 +238,7 @@ dbclose();
 				
 				echo('
 					<div class="detailTitle">'.htmlentities($data["title"]).'<div class="actions">
-							<span id="addToList" ><img src="assets/images/add.png"><br>Add to mylist</span><span id="download"><img src="assets/images/download.png"><br>Download this score</span><span id="flag"><img src="assets/images/flag.png"><br>Report this score</span>
+							<span id="backToList" ><img src="assets/images/back.png"><br>Back to list</span><span id="addToList" ><img src="assets/images/add.png"><br>Add to mylist</span><span id="download"><img src="assets/images/download.png"><br>Download this score</span><span id="flag"><img src="assets/images/flag.png"><br>Report this score</span>
 						
 						</div><div class="flagItContainer">
 							<div class="flagItHeader">Report this score</div>
@@ -322,11 +322,15 @@ dbclose();
 					// if isFlagged = 1, make the download button unable to click
 					if($data['isFlagged'] == 1){
 						echo("<script>
-								$('#download').html('<img src=assets/images/download.png><br>Reported');
+								$('#download').html('<img src=assets/images/download.png><br>Download suspended');
 								$('#download').addClass('inDispute');
 								$('.actions span[id=flag]').remove();
 							  </script>");
 					}
+					
+					echo("
+						<script>document.title='".htmlentities($data['title'])."';</script>
+						");
 				?>
 	            
             </div>
@@ -516,6 +520,11 @@ $(document).ready(function(){
 		});
 	});
 	
+	// back button
+	$('#backToList').click(function(){
+		history.back(1);
+	});
+	
 	// resolve part
 	$('#flag').click(function(){
 		var isLoggedIn = <?php if(isset($_SESSION['primaryId'])){ echo 1; }else { echo 0; } ?>;
@@ -527,7 +536,7 @@ $(document).ready(function(){
 	});
 	
 	$('.revoke').click(function(){
-		$('.flagItContainer .flagItHeader').text('Resolve the dispute');
+		$('.flagItContainer .flagItHeader').text('Resolve the reported status');
 		$('.flagItContainer .flagIt').css('height', '230px');
 		$('.flagItContainer .flagIt').html('<span class="warning">You can rebut the current hold status by sending us the reason(s) this score is not problematic. Once submitted, this resolve request will be reviewed by the operators. </span><hr style="width: 99%;" color="#BBBBBB" size="1" no-shade></hr><textarea data-role="none" rows=9 cols=77 id="flagDesc" name="flagDesc"></textarea><br><input type="button" value="Report" onclick=alert("REQUEST_SENT");location.href="view.php?id=<?php echo(htmlentities($data['id'])); ?>"><input type="button" value="Cancel" id="cancelButton" onclick=$(".flagItContainer").fadeOut(300)>');
 		$('.flagItContainer').fadeIn(300);
