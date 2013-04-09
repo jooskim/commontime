@@ -2,54 +2,31 @@
 session_start();
 require_once("cookie.php");
 require_once("functions.php");
-
-// gets the cookie for auto login feature and decrypt it for use
-if(!isset($_SESSION['primaryId']) && isset($_COOKIE[$CFG->cookiename]) && isset($CFG->cookiepad) && $CFG->cookiepad !== false){
-	$encCookie = $_COOKIE[$CFG->cookiename];
-	$decCookie = extract_secure_cookie($encCookie);
-	if($decCookie === false ) {
-        die('Decryption failed:'.$encCookie);
-        delete_secure_cookie();
-    }
-	
-	$cookie_primaryId = $decCookie[0]+0;
-	if($cookie_primaryId < 0){
-		$cookie_primaryId = false;
-		$decCookie = false;
-		die("Auto login information is corrupt");
-	}else{
-		// check if the p_primary is the same as the one in the db
-		require_once("connect.php");
-		dbconnect();
-		$isThisValidId = mysql_real_escape_string($cookie_primaryId);
-		$query = "SELECT * FROM CT_User WHERE id = $isThisValidId;";
-		$result = mysql_query($query, $connect);
-		if(!$result){
-			die("No match found. This user no longer exists.");
-			delete_secure_cookie();
-		}else{
-			$data = mysql_fetch_array($result);
-			if($decCookie[1] != md5($data['userPw'])){
-				die("Corrupt identity!");
-				delete_secure_cookie();
-			}else{
-				$_SESSION['primaryId'] = $decCookie[0];
-				$_SESSION['userIdentity'] = $decCookie[1]; // used for authorization
-				$_SESSION['firstName'] = $data['firstName'];
-				$_SESSION['lastName'] = $data['lastName'];
-				$_SESSION['userEmail'] = $data['userEmail'];
-				$_SESSION['level'] = $data['level'];
-				dbclose();
-			}
-		}
-	}
+if(isset($_GET['id'])){
+	$scoreNum = $_GET['id'];
+}else{
+	$scoreNum = -1;
 }
 
+dbconnect();
+$query = "SELECT * FROM CT_Score WHERE id = ".mysql_real_escape_string($scoreNum).";";
+$result = mysql_query($query, $connect);
+$numOfResult = mysql_num_rows($result);
+
+if(!isset($_GET['id']) || $numOfResult == 0){
+	$_SESSION['error'] = "The score you tried to access does not exist!";
+	header("Location: browse.php");
+}else{
+	// get data from the database
+	$fetchResult = mysql_query($query, $connect);
+}
+dbclose();
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Untitled Document</title>
 <script src="./assets/libraries/jquery-1.9.1.min.js"></script>
 <script src="http://code.jquery.com/mobile/1.3.0/jquery.mobile-1.3.0.min.js"></script>
 <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
@@ -60,79 +37,7 @@ if(!isset($_SESSION['primaryId']) && isset($_COOKIE[$CFG->cookiename]) && isset(
 <link rel="stylesheet" href="./assets/style.css">
 <link rel="stylesheet" href="./assets/libraries/select/select2.css">
 <link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.0/jquery.mobile-1.3.0.min.css" />
-<?php
 
-// look for default parameters
-if(isset($_GET['keyword'])){
-	$srchType = $_GET['srchType'];
-	$keyword = $_GET['keyword'];
-	if($_GET['keyword'] != ''){
-		$docTitle = "Search results for ".htmlentities($keyword);
-	}else{
-		$docTitle = "Browse music scores";
-	}
-	
-	
-	// search and retrieve data with given parameters
-	dbconnect();
-	if($srchType != 'tag'){
-		if($srchType == 'genre'){
-			$tempQuery = "SELECT id FROM CT_Genre WHERE genre LIKE '%".mysql_real_escape_string($keyword)."%';";
-			$tempResult = mysql_query($tempQuery, $connect);
-			$fetchQuery = "SELECT * FROM CT_Score WHERE ";
-		
-			while($tempData = mysql_fetch_array($tempResult)){
-				$fetchQuery .= "genre = ".$tempData['id']." OR ";
-			}
-			if(mysql_num_rows($tempResult) == 0){
-				$fetchQuery = "SELECT id FROM CT_Score WHERE 0;";
-			}else{
-				$fetchQuery = substr($fetchQuery, 0, strlen($fetchQuery)-3);
-				$fetchQuery .= ";";
-			}
-		}else{
-			if($srchType == 'instrumentation'){
-				$tempQuery = "SELECT id FROM CT_Instrumentation WHERE instrumentation = '".mysql_real_escape_string($keyword)."';";
-				$tempResult = mysql_query($tempQuery, $connect);
-				$tempData = mysql_fetch_array($tempResult);
-				if(mysql_num_rows($tempResult) > 0){
-					$fetchQuery = "SELECT * FROM CT_Score WHERE instrumentation = ".mysql_real_escape_string($tempData['id']).";";
-				}else{
-					$fetchQuery = "SELECT id FROM CT_Score WHERE 0;";
-				}
-
-			}else{
-				$fetchQuery = "SELECT * FROM CT_Score WHERE ".mysql_real_escape_string($srchType)." LIKE '%".mysql_real_escape_string($keyword)."%' LIMIT 0, 10;";
-			}
-		}
-	}else if($srchType == 'tag'){
-		$tempQuery = "SELECT DISTINCT refScore FROM CT_ScoreTag WHERE tag LIKE '%".mysql_real_escape_string($keyword)."%';";
-		$tempResult = mysql_query($tempQuery, $connect);
-		$fetchQuery = "SELECT * FROM CT_Score WHERE ";
-		
-		while($tempData = mysql_fetch_array($tempResult)){
-			$fetchQuery .= "id = ".$tempData['refScore']." OR ";
-		}
-		if(mysql_num_rows($tempResult) == 0){
-			$fetchQuery = "SELECT id FROM CT_Score WHERE 0;";
-		}else{
-			$fetchQuery = substr($fetchQuery, 0, strlen($fetchQuery)-3);
-			$fetchQuery .= ";";
-		}
-	}
-	$fetchResult = mysql_query($fetchQuery, $connect);
-	
-}else{
-	$docTitle = "Browse music scores";
-	
-	// gets the 10 items and display on the display
-	dbconnect();
-	$fetchQuery = "SELECT * FROM CT_Score LIMIT 0, 10;";
-	$fetchResult = mysql_query($fetchQuery, $connect);
-	
-}
-?>
-<title><?=$docTitle;?></title>
 </head>
 
 <body>
@@ -299,86 +204,164 @@ if(isset($_GET['keyword'])){
             </div>
             <div class="itemList">
             	<?php
-				while($data = mysql_fetch_array($fetchResult)){
-					$numOfResults = mysql_num_rows($fetchResult);
+				$data = mysql_fetch_array($fetchResult);
+				
+				// uploaded by
+				dbconnect();
+				$up_Query = "SELECT firstName FROM CT_User WHERE id = ".$data['uploadedBy'].";";
+				$up_Result = mysql_query($up_Query, $connect);
 					
-					// only for genre data
-					dbconnect();
-					$genre_Query = "SELECT genre FROM CT_Genre WHERE id = ".$data['genre'];
-					$genre_Result = mysql_query($genre_Query, $connect);
-					$genreData = mysql_fetch_array($genre_Result);
-					$data['genre'] = $genreData[0];
-					dbclose();
+				// only for genre data
+				$genre_Query = getSQLFromID("genre", $data['genre']);
+				$genre_Result = mysql_query($genre_Query, $connect);
+				
+				// only for style data
+				$style_Query = getSQLFromID("style", $data['style']);
+				$style_Result = mysql_query($style_Query, $connect);
+				
+				// only for instrumentation data
+				$instr_Query = getSQLFromID("instrumentation", $data['instrumentation']);
+				$instr_Result = mysql_query($instr_Query, $connect);
+				
+				// only for tag data
+				$tag_Query = getSQLFromID("tag", $data['id']);
+				$tag_Result = mysql_query($tag_Query, $connect);
+				
+				// only for comments data
+				$comments_Query = getSQLFromID("comment", $data['id']);
+				$comments_Result = mysql_query($comments_Query, $connect);
+				
+				// only for flagHistory data
+				$flag_Query = getSQLFromID("flagHistory", $data['id']);
+				$flag_Result = mysql_query($flag_Query, $connect);
+				dbclose();
+				
+				echo('
+					<div class="detailTitle">'.htmlentities($data["title"]).'<div class="actions">
+							<span id="addToList" ><img src="assets/images/add.png"><br>Add to mylist</span><span id="download"><img src="assets/images/download.png"><br>Download this score</span><span id="flag"><img src="assets/images/flag.png"><br>Report this score</span>
+						
+						</div><div class="flagItContainer">
+							<div class="flagItHeader">Report this score</div>
+							<div class="flagIt"><span class="warning">You are about to report the following score.<br></span><span style="color: #455F7B; font-weight: bold; font-size: 16px; margin-top: 7px; display: inline-block; margin-bottom: 7px;">'.htmlentities($data["title"]).'</span><span class="warning"><br>Please make sure that you have proper sources as you describe the reason(s) for this claim in the text field below. This report will be reviewed by the operators as soon as it is submitted. Also, by reporting this score as problematic, you agree that other users can participate in the rebuttal process to prevent, if any, misjudgements.</span><hr style="width: 99%;" color="#BBBBBB" size="1" no-shade></hr><form id="flagForm" data-ajax="false"><textarea data-role="none" rows=9 cols=77 id="flagDesc" name="flagDesc"></textarea><br>'); if(isset($_SESSION['primaryId'])){ echo('<input type="hidden" id="flagTo" name="flagTo" value='.htmlentities($data['id']).'><input type="hidden" id="flagBy" name="flagBy" value='.$_SESSION['primaryId'].'>');} echo('<input type="submit" value="Report" id="submitFlag"><input type="button" value="Cancel" id="cancelButton" onclick=$(".flagItContainer").fadeOut(300)></form></div>
+						</div></div>
 					
-					if($numOfResults > 0){
-						$instr = idToValue("instrumentation", "CT_Instrumentation", $data["instrumentation"]);
-						$upBy = idToValue("firstName", "CT_User", $data["uploadedBy"]);
-						echo('
-							<div class="scoreEntity" data-link='.htmlentities($data['id']).'>
-								<div class="figures"><table border=0 width="100px"><tr><td><img src="assets/images/download.png"></td><td>'.htmlentities($data["downloads"]).'</td><td><img src="assets/images/like.png"></td><td>'.htmlentities($data["likes"]).'</td></tr></table></div>
-                				<img src="assets/images/defaultalbumart.jpg" class="albumArt" />
-		                   	<div class="textInfo">
-		                   	 	<span class="title">'.htmlentities($data["title"]).'</span><br />
-		                        <span class="key">Composer</span><span class="value">'.htmlentities($data["composer"]).'</span><br /> <!-- composer -->
-		                        <span class="key">Genre</span><span class="value">'.htmlentities($data["genre"]).'</span><br /> <!-- genre -->
-		                        <span class="key">Compose year</span><span class="value">'.htmlentities($data["composeYear"]).'</span><br /> <!-- compose year -->
-		                        <span class="key">Publish year</span><span class="value">'.htmlentities($data["publishYear"]).'</span><br /> <!-- publish year -->
-		                        <span class="key">Instrumentation</span><span class="value">'.$instr[0].'</span><br /> <!-- instrumentation -->
-		                        <span class="key">Opus number</span><span class="value">'.htmlentities($data["opusNum"]).'</span><br /> <!-- opusnum -->
-		                        <span class="key">Uploaded by</span><span class="value">'.$upBy[0].'</span><br /> <!-- uploaded by -->
-		                    </div>
-		                </div>
-						');
-					}else {
+					<div class="scoreDetail"><div id="scoreimg"></div>
+						<span class="subTitle">General Information</span><br>
+						<div class="txt">
+							<span class="key">Composer</span><span class="value">'.htmlentities($data["composer"]).'</span><br>
+							<span class="key">Compose Year</span><span class="value">'.htmlentities($data["composeYear"]).'</span><br>
+							<span class="key">Genre</span><span class="value">');
+							while($dataGenre = @mysql_fetch_array($genre_Result)){
+								echo(htmlentities($dataGenre[0].", "));
+							}
+							echo('</span><br>
+							<span class="key">Opus Number</span><span class="value">'.htmlentities($data["opusNum"]).'</span><br>
+							<span class="key">Key</span><span class="value">'.htmlentities($data["key"]).'</span><br>
+							<span class="key">Language</span><span class="value">'.htmlentities($data["language"]).'</span><br>
+							<span class="key">Piece Style</span><span class="value">');
+							while($dataStyle = @mysql_fetch_array($style_Result)){
+								echo(htmlentities($dataStyle[0].", "));
+							}
+							echo('</span><br>
+							<span class="key">Instrumentation</span><span class="value">');
+							while($dataInstr = @mysql_fetch_array($instr_Result)){
+								echo(htmlentities($dataInstr[0].", "));
+							}
+							echo('</span><br>
+						</div>
+		            </div>
+					<div class="scoreDetail">
+						<span class="subTitle">Music Score Information</span><br>
+						<div class="txt">
+							<span class="key">Publish Year</span><span class="value">'.htmlentities($data["publishYear"]).'</span><br>
+							<span class="key">Uploaded by</span><span class="value">');
+							$dataUp = mysql_fetch_array($up_Result);
+							echo(htmlentities($dataUp[0]).'</span><br>
+							<span class="key">Description</span><span class="value">'.htmlentities($data["description"]).'</span><br>
+						</div>
+					</div>
+					<div class="scoreDetail">
+						<span class="subTitle">Tags</span><br>
+						<div class="txt">');
+							while($dataTag = @mysql_fetch_array($tag_Result)){
+								echo("<span class='tags' data-link='browse.php?srchType=tag&keyword=".htmlentities($dataTag[0])."'>".htmlentities($dataTag[0]).", </span>");
+							}
+							echo('
+						</div>
+					</div>
+					<div class="scoreDetail">
+						<span class="subTitle">Comments</span><br>
+						<div class="txt">
+						<form id="msgForm" data-ajax="false">'); if(isset($_SESSION['firstName'])){ echo('<input type="text" data-inline="true" name="msgContent" id="msgContent"><input type="hidden" value='.$_SESSION['primaryId'].' id="msgBy" name="msgBy">');} echo('<input type="hidden" value='.$data["id"].' id="msgTo" name="msgTo"></form><div class="commentArea">');
+							while($dataComments = @mysql_fetch_array($comments_Result)){
+								$tempData = idToValue("firstName", "CT_User", $dataComments['commentBy']);
+
+								echo("<div class='msgItem' id=".htmlentities($dataComments['id'])."><span class='name'>".htmlentities($tempData[0])."</span><span class='time'>(".date("M d, Y H:i:s",htmlentities($dataComments['timestamp'])).")</span><span class='msg'>".htmlentities($dataComments['comment'])."</span></div>");
+							}
+							echo('
+						</div></div>
+					</div>
+					<div class="scoreDetail">
+						<span class="subTitle">Flag History</span><br>
+						<div class="txt">
+							<div class="commentArea">');
+							if(mysql_num_rows($flag_Result) == 0){
+								echo("<span style='color: #aeaeae;' class='msg'>No flag history</span>");
+							}
+							
+							while($dataFlag = @mysql_fetch_array($flag_Result)){
+								$tempData = idToValue("firstName", "CT_User", $dataFlag['flagBy']);
+								echo("<div class='msgItem' id=".htmlentities($dataFlag['id'])."><span class='name'>".htmlentities($tempData[0])."</span><span class='time'>(".date("M d, Y H:i:s",htmlentities($dataFlag['timestamp'])).")</span><span class='msg'>".htmlentities($dataFlag['description'])."</span>"); if($dataFlag['isResolved'] == 0){ echo('<span class="revoke">resolve</span>');}else{ echo('<span class="time">resolved</span>');} echo("</div>");
+							}
+							echo('
+							</div>
+						</div>
+					</div>
+					');
+				
+					// if isFlagged = 1, make the download button unable to click
+					if($data['isFlagged'] == 1){
+						echo("<script>
+								$('#download').html('<img src=assets/images/download.png><br>Reported');
+								$('#download').addClass('inDispute');
+								$('.actions span[id=flag]').remove();
+							  </script>");
 					}
-				}
 				?>
 	            
             </div>
-        </div>
-    </div>
+        </div>    </div>
     <div class="footer">
     
     </div>
 </div>
-
-<?php
-/* displayes errors */
-if(isset($_SESSION['error'])){
-	echo("<script>
-	$('#notification_main').removeClass('success');
-	$('#notification_main').html('".$_SESSION['error']."').show();
-	setTimeout(function(){
-		$('#notification_main').fadeOut(300);
-	}, 2000);
-	</script>");
-	unset($_SESSION['error']);
-}
-if(isset($_SESSION['success'])){
-	echo("<script>
-	$('#notification_main').addClass('success');
-	$('#notification_main').html('".$_SESSION['success']."').show();
-	setTimeout(function(){
-		$('#notification_main').fadeOut(300);
-	}, 2000);
-	</script>");
-
-	unset($_SESSION['success']);
-}
-
-if(isset($_GET['keyword'])){
-	echo("
-		<script>
-		$('#keyword').css('color', '#000000');
-		$('#srchType').val('".$_GET['srchType']."');
-		$('#keyword').val('".$_GET['keyword']."');</script>
-	");
-}
-?>
 <script>
 // should be exported to a separate JS file
 var availableTags, signUpWidth;
+var comments = [];
 
+$('#msgForm').submit(function(e){
+	$.ajax({
+		url: 'retrieve.php',
+		data: {'mode': 2, 'msgTo': $('#msgForm #msgTo').val(), 'msgBy': $('#msgForm #msgBy').val(), 'msgContent': $('#msgForm #msgContent').val()},
+		success: function(data){
+			location.href='view.php?id='+$('#msgForm #msgTo').val();
+		}
+	});
+	e.preventDefault();
+
+});
+
+$('#flagForm').submit(function(e){
+	$.ajax({
+		url: 'retrieve.php',
+		data: {'mode': 3, 'flagBy': $('#flagForm #flagBy').val(), 'flagTo': $('#flagForm #flagTo').val(), 'flagDesc': $('#flagForm #flagDesc').val()},
+		success: function(data){
+			location.href='view.php?id='+$('#flagForm #flagTo').val();
+		}
+	});
+	e.preventDefault();
+});
 $('#FSU_submit').click(function(e){
 	var firstName = $('#new_firstName').val();
 	var lastName = $('#new_lastName').val();
@@ -413,6 +396,7 @@ $(window).resize(function(){
 	$('.srchbox #textinput').css({'width': (innerWidth - 530)+'px'});
 	$('.srchbox #textinput .ui-input-text').css({'width': (innerWidth - 665)+'px'});
 	$('.main_right .textInfo').css({'width': (innerWidth - 500)+'px'});
+	$('.flagItContainer').css({'left': (innerWidth - 1000)/2+'px'});
 });
 
 $(document).ready(function(){
@@ -488,6 +472,7 @@ $(document).ready(function(){
 	$('.srchbox #textinput').css({'width': (innerWidth - 530)+'px'});
 	$('.srchbox #textinput .ui-input-text').css({'width': (innerWidth - 665)+'px'});
 	$('.main_right .textInfo').css({'width': (innerWidth - 500)+'px'});
+	$('.flagItContainer').css({'left': (innerWidth - 1000)/2+'px'});
 
 	
 	/* sign in/up and help event handlers */
@@ -531,8 +516,25 @@ $(document).ready(function(){
 		});
 	});
 	
-	$('.scoreEntity').click(function(){
-		location.href="view.php?id="+$(this).attr('data-link');
+	// resolve part
+	$('#flag').click(function(){
+		var isLoggedIn = <?php if(isset($_SESSION['primaryId'])){ echo 1; }else { echo 0; } ?>;
+		if(isLoggedIn == 1){
+			$('.flagItContainer').fadeIn(300);
+		}else{
+			alert('You have to log in to report a score!');
+		}
+	});
+	
+	$('.revoke').click(function(){
+		$('.flagItContainer .flagItHeader').text('Resolve the dispute');
+		$('.flagItContainer .flagIt').css('height', '230px');
+		$('.flagItContainer .flagIt').html('<span class="warning">You can rebut the current hold status by sending us the reason(s) this score is not problematic. Once submitted, this resolve request will be reviewed by the operators. </span><hr style="width: 99%;" color="#BBBBBB" size="1" no-shade></hr><textarea data-role="none" rows=9 cols=77 id="flagDesc" name="flagDesc"></textarea><br><input type="button" value="Report" onclick=alert("REQUEST_SENT");location.href="view.php?id=<?php echo(htmlentities($data['id'])); ?>"><input type="button" value="Cancel" id="cancelButton" onclick=$(".flagItContainer").fadeOut(300)>');
+		$('.flagItContainer').fadeIn(300);
+	});
+	
+	$('.tags').click(function(){
+		location.href=$(this).attr('data-link');
 	});
 	
 	/* category links */
@@ -544,6 +546,8 @@ $(document).ajaxSuccess(function(){
 	$('#keyword').autocomplete({
 		source: availableTags
 	});
+	
+
 });
 	
 });

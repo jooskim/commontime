@@ -185,10 +185,10 @@ if(isset($_POST['loginType'])){
                 <ul>
                 	<?php
 					dbconnect();
-					$query = "SELECT title FROM CT_Score ORDER BY id DESC;";
+					$query = "SELECT * FROM CT_Score ORDER BY id DESC;";
 					$result = mysql_query($query, $connect);
 					while($data=mysql_fetch_array($result)){
-						echo('<li>'.htmlentities($data['title']).'</li>');
+						echo('<li class="most" style="cursor: pointer" data-link='.htmlentities($data['id']).'>'.htmlentities($data['title']).'</li>');
 					}
 					?>
                 </ul>
@@ -198,10 +198,10 @@ if(isset($_POST['loginType'])){
             	<ul>
                 	<?php
 					dbconnect();
-					$query = "SELECT title FROM CT_Score ORDER BY id DESC;";
+					$query = "SELECT * FROM CT_Score ORDER BY id DESC;";
 					$result = mysql_query($query, $connect);
 					while($data=mysql_fetch_array($result)){
-						echo('<li>'.htmlentities($data['title']).'</li>');
+						echo('<li class="most" style="cursor: pointer" data-link='.htmlentities($data['id']).'>'.htmlentities($data['title']).'</li>');
 					}
 					?>
                 </ul>
@@ -384,6 +384,10 @@ $(document).ready(function(){
 				}
 			}
 		});
+	});
+	
+	$('.most').click(function(){
+		location.href="view.php?id="+$(this).attr("data-link");
 	});
 	
 $(document).ajaxSuccess(function(){

@@ -55,5 +55,38 @@ if(!isset($_REQUEST['mode'])){
 		dbclose();
 		echo(json_encode($arr2JSON));
 	}
+	
+	if($mode == 2){
+		dbconnect();
+		$msgTo = $_REQUEST['msgTo'];
+		$msgBy = $_REQUEST['msgBy'];
+		$msg = $_REQUEST['msgContent'];
+		$query = "INSERT INTO CT_ScoreComment (refScore, commentBy, comment, timestamp) VALUES(".mysql_real_escape_string($msgTo).", ".mysql_real_escape_string($msgBy).", '".mysql_real_escape_string($msg)."', UNIX_TIMESTAMP());";
+		$result = mysql_query($query, $connect);
+		if(!$result){
+			$query2 = "SELECT * FROM CT_ScoreComment WHERE refScore = ".mysql_real_escape_string($msgTo)." ORDER BY timestamp DESC;";
+			$result2 = mysql_query($query2, $connect);
+			while($data2 = mysql_fetch_array($result2)){
+				$arr2JSON->append($data2);
+			}
+			dbclose();
+			echo(json_encode($arr2JSON));
+		}
+	}
+	
+	if($mode == 3){
+		dbconnect();
+		$flagTo = $_REQUEST['flagTo'];
+		$flagBy = $_REQUEST['flagBy'];
+		$flagDesc = $_REQUEST['flagDesc'];
+		$query = "INSERT INTO CT_FlagHistory (refScore, flagBy, description, timestamp) VALUES(".mysql_real_escape_string($flagTo).", ".mysql_real_escape_string($flagBy).", '".mysql_real_escape_string($flagDesc)."', UNIX_TIMESTAMP());";
+		$query2 = "UPDATE CT_Score SET isFlagged = 1 WHERE id = ".mysql_real_escape_string($flagTo).";";
+		$result = mysql_query($query, $connect);
+		if($result){
+			$result2 = mysql_query($query2, $connect);
+		}
+		dbclose();
+		echo('done');
+	}
 }
 ?>

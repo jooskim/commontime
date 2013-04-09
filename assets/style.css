@@ -24,6 +24,7 @@ body {
 	position: absolute;
 	float: left;
 	font-size: 20px;
+	font-family: Kotta One;
 	padding-left: 15px;
 	padding-top: 10px;
 	font-weight: bold;
@@ -38,7 +39,7 @@ body {
 	height: 40px;
 	width: 100%;
 	background-color: #A1B3C3;
-	box-shadow: 0 2px 8px #BBB;
+	box-shadow: 0 2px 8px #555;
 }
 
 .top_nav .topmenus {
@@ -86,6 +87,7 @@ body {
 	padding: 10px;
 	height: 25px;
 	background-color: #FFE7A5;
+	z-index: 5;
 }
 
 #notification_main.success {
@@ -510,6 +512,16 @@ input#keyword {
 	cursor: pointer;
 }
 
+.scoreEntity .figures {
+	display: inline;
+	position: relative;
+	float: left;
+	left: 30px;
+	top: 144px;
+	width: 0px;
+	height: 0px;
+}
+
 .scoreEntity:hover {
 	background-color: rgba(225,225,225,0.8);
 }
@@ -562,3 +574,209 @@ input#keyword {
 .tags:hover {
 	background-color: #cfcfcf;
 }
+
+/* view.php */
+.scoreDetail {
+	padding-top: 8px;
+	padding-bottom: 5px;
+	margin-top: 5px;
+	text-align: left;
+	width: 99%;
+	background-color: rgba(245,245,245,0.8);
+	display: block;
+	border: solid 1px #cccccc;
+}
+
+.actions {
+	position: relative;
+	float:right;
+	top: -10px;
+	right: 5px;
+	font-size: 12px;
+}
+
+.actions span {
+	color: #000;
+	display: inline-block;
+	text-align: center;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 5px;
+	padding-bottom: 3px;
+	background-color: #e7e7e7;
+	border: 1px solid #455F7B;
+	margin-right: 5px;
+	line-height: 20px;
+	cursor: pointer;
+}
+
+.actions span:hover {
+	background-color: #d7d7d7;
+}
+
+.actions span#download.inDispute {
+	background-color: #980808;
+	opacity: 0.8;
+	text-shadow: none;
+	color: #fff;
+	cursor: default;
+}
+
+.actions span#flag {
+	border: 1px solid #980808;
+}
+
+.detailTitle {
+	text-align: left;
+	font-size: 26px;
+	font-weight: bold;
+	color: #455F7B;
+	text-shadow: 1px 2px 0 #FFFFFF;
+	line-weight: 25px;
+	border: 0;
+	background: none;
+	cursor: default;
+	margin-bottom: 10px;
+}
+
+.scoreDetail .subTitle {
+	font-size: 20px;
+	margin-left: 12px;
+	color: #455F7B;
+	border: 0;
+}
+
+.actions {
+	float: right;
+}
+
+.scoreDetail .txt {
+	position: relative;
+	text-align: left;
+	border: 0;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	padding-left: 10px;
+}
+
+.scoreDetail .txt .key {
+	display: inline-block;
+	text-align: left;
+	width: 100px;
+	color: #455F7B;
+	line-height: 20px;
+	padding-left: 10px;
+	border: 0;
+
+}
+
+.scoreDetail .txt .value {
+	line-height: 20px;
+	border: 0;
+
+}
+
+.commentArea .msgItem {
+	display: inline-block;
+	width: 100%;
+}
+
+
+.commentArea .name {
+	color: #455F7B;
+	display: inline-block;
+	line-height: 18px;
+	padding-left: 10px;
+}
+
+.commentArea .msg {
+	display: inline-block;
+	line-height: 18px;
+}
+
+.commentArea .time {
+	color: #aeaeae;
+	display: inline-block;
+	width: 130px;
+	margin-left: 5px;
+	font-size: 11px;
+	line-height: 18px;
+}
+
+.commentArea .revoke {
+	color: #455F7B;
+	display: inline-block;
+	line-height: 18px;
+	padding-left: 7px;
+	padding-right: 7px;
+	padding-top: 1px;
+	padding-bottom: 1px;
+	margin-left: 10px;
+	background-color: #DFDFDF;
+	cursor: pointer;
+}
+
+#scoreimg {
+	float: right;
+	position: relative;
+	width: 190px;
+	height: 190px;
+	margin-right: 10px;
+	background-color: #999;
+}
+
+.flagItContainer {
+	display: none;
+	position: relative;
+	width: 0;
+	height: 0;
+	width: 500px;
+	float: left;
+	top: 100px;
+	z-index: 6;
+	font-size: 12px;
+}
+
+.flagItHeader {
+	position: relative;
+	font-size: 24px;
+	color: #ffffff;
+	text-shadow: 0 1px 0 #000;
+	width: 100%;
+	height: 30px;
+	padding: 11px;
+	background-color: #728293;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	z-index:5;
+}
+
+.flagIt {
+	position: relative;
+	font-size: 12px;
+	text-align: center;
+	width: 100%;
+	height: 310px;
+	top: -50px;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 60px;
+	padding-bottom: 10px;
+	background-color: #ffffff;
+	border-radius: 10px;
+	border: solid 1px #728293;
+	box-shadow: 0 3px 10px 2px #333333;
+}
+
+.flagIt .warning {
+	font-size: 14px;
+	color: #000;
+	line-height: 18px;
+	font-weight: normal;
+}
+
+textarea {
+	border-radius: 10px;
+	border: 1px solid #a7a7a7;
+}
+

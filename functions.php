@@ -95,4 +95,37 @@ function getPartJSON($table, $fields, $filter)
 	return $return;
 }
 
+function getSQLFromID($type, $param) {
+	if($type == "firstName"){
+		return "SELECT firstName FROM CT_User WHERE id = ".mysql_real_escape_string($param).";";
+	}else if($type == "lastName"){
+		return "SELECT lastName FROM CT_User WHERE id = ".mysql_real_escape_string($param).";";
+	}else if($type == "redFlag"){
+		return "SELECT redFlag FROM CT_User WHERE id = ".mysql_real_escape_string($param).";";
+	}else if($type == "joinDate"){
+		return "SELECT joinDate FROM CT_User WHERE id = ".mysql_real_escape_string($param).";";
+	}else if($type == "flagHistory"){
+		return "SELECT * FROM CT_FlagHistory WHERE refScore = ".mysql_real_escape_string($param)." ORDER BY timestamp DESC;";
+	}else if($type == "genre"){
+		return "SELECT genre FROM CT_Genre WHERE id = ".mysql_real_escape_string($param).";";
+	}else if($type == "instrumentation"){
+		return "SELECT instrumentation FROM CT_Instrumentation WHERE id = ".mysql_real_escape_string($param).";";
+	}else if($type == "comment"){
+		return "SELECT * FROM CT_ScoreComment WHERE refScore = ".mysql_real_escape_string($param)." ORDER BY timestamp DESC;";
+	}else if($type == "style"){
+		return "SELECT style FROM CT_Style WHERE id = ".mysql_real_escape_string($param).";";
+	}else if($type == "tag"){
+		return "SELECT tag FROM CT_ScoreTag WHERE refScore = ".mysql_real_escape_string($param).";";
+	}
+}
+
+function idToValue($val, $table, $condition){
+	global $connect;
+	dbconnect();
+	$query = "SELECT ".mysql_real_escape_string($val)." FROM ".mysql_real_escape_string($table)." WHERE id = ".mysql_real_escape_string($condition).";";
+	$result = mysql_query($query, $connect);
+	$data = @mysql_fetch_array($result);
+	dbclose();
+	return $data;
+}
 ?>
