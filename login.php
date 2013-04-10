@@ -45,6 +45,10 @@ if($_GET['loginType'] == 1){ // OpenID Login
 
 	if(isset($doLogin) && $doLogin === true){
 		dbconnect();
+<<<<<<< HEAD
+=======
+
+>>>>>>> 3a8069b3908bcc6769e77238a2b935fa355eea09
 		// put into the database
 		$userEmail = mysql_real_escape_string($userEmail);
 		$firstName = mysql_real_escape_string($firstName);
