@@ -299,6 +299,9 @@ if(isset($_GET['keyword'])){
             </div>
             <div class="itemList">
             	<?php
+				if(mysql_num_rows($fetchResult) == 0){
+					echo("<div style='background-color: rgba(245,245,245,0.8); width: 99%; border: solid 1px #cccccc; height:auto; padding-top: 15px; padding-bottom: 15px;'><span style='font-size: 16px; font-weight: bold'>Your search returned no matching results!</span></div>");
+				}
 				while($data = mysql_fetch_array($fetchResult)){
 					$numOfResults = mysql_num_rows($fetchResult);
 					

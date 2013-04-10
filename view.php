@@ -322,7 +322,7 @@ dbclose();
 					// if isFlagged = 1, make the download button unable to click
 					if($data['isFlagged'] == 1){
 						echo("<script>
-								$('#download').html('<img src=assets/images/download.png><br>Download suspended');
+								$('#download').html('<img src=assets/images/download.png><br>Reported');
 								$('#download').addClass('inDispute');
 								$('.actions span[id=flag]').remove();
 							  </script>");
