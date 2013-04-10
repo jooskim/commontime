@@ -269,7 +269,7 @@ if(isset($_GET['keyword'])){
 					$query_Cat = "SELECT * FROM CT_Instrumentation;";
 					$result_Cat = mysql_query($query_Cat, $connect);
 					while($data = mysql_fetch_array($result_Cat)){
-						$query_scoresOfSubcat = "SELECT COUNT(*) FROM CT_Score WHERE instrumentation = '".$data["instrumentation"]."';";
+						$query_scoresOfSubcat = "SELECT COUNT(*) FROM CT_Score WHERE instrumentation = '".$data["id"]."';";
 						$result_scoresOfSubcat = mysql_query($query_scoresOfSubcat, $connect);
 						$numOfScoresOfSubcat = mysql_fetch_array($result_scoresOfSubcat);
 						echo('<li class="subInstrumentation" onclick=location.href="browse.php?srchType=instrumentation&keyword='.$data["instrumentation"].'">'.htmlentities($data["instrumentation"]).' ('.$numOfScoresOfSubcat[0].')</li>');
