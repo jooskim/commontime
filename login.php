@@ -44,13 +44,13 @@ if($_GET['loginType'] == 1){ // OpenID Login
 	}
 
 	if(isset($doLogin) && $doLogin === true){
+		dbconnect();
 		// put into the database
 		$userEmail = mysql_real_escape_string($userEmail);
 		$firstName = mysql_real_escape_string($firstName);
 		$lastName = mysql_real_escape_string($lastName);
 		$userPw = $password;
 
-		dbconnect();
 		$query = "SELECT * FROM CT_User WHERE userPw = '$userPw';";
 		$result = mysql_query($query, $connect);
 		if(!$result){

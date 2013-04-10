@@ -252,7 +252,7 @@ dbclose();
 							<span class="key">Compose Year</span><span class="value">'.htmlentities($data["composeYear"]).'</span><br>
 							<span class="key">Genre</span><span class="value">');
 							while($dataGenre = @mysql_fetch_array($genre_Result)){
-								echo(htmlentities($dataGenre[0].", "));
+								echo("<span class='genres' data-link='browse.php?srchType=genre&keyword=".htmlentities($dataGenre[0])."'>".htmlentities($dataGenre[0])." </span>");
 							}
 							echo('</span><br>
 							<span class="key">Opus Number</span><span class="value">'.htmlentities($data["opusNum"]).'</span><br>
@@ -284,7 +284,7 @@ dbclose();
 						<span class="subTitle">Tags</span><br>
 						<div class="txt">');
 							while($dataTag = @mysql_fetch_array($tag_Result)){
-								echo("<span class='tags' data-link='browse.php?srchType=tag&keyword=".htmlentities($dataTag[0])."'>".htmlentities($dataTag[0]).", </span>");
+								echo("<span class='tags' data-link='browse.php?srchType=tag&keyword=".htmlentities($dataTag[0])."'>".htmlentities($dataTag[0])." </span>");
 							}
 							echo('
 						</div>
@@ -543,6 +543,10 @@ $(document).ready(function(){
 	});
 	
 	$('.tags').click(function(){
+		location.href=$(this).attr('data-link');
+	});
+	
+	$('.genres').click(function(){
 		location.href=$(this).attr('data-link');
 	});
 	
