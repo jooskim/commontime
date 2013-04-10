@@ -213,12 +213,30 @@ input#keyword {
 }
 */
 
+/* */
+.moreBtn {
+	float: right;
+	padding-right: 5px;
+	padding-left: 5px;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	color: #fff;
+	text-shadow: 0px 1px 1px #000;
+	position: relative;
+	top: 25px;
+	right: 5px;
+}
+
+.moreBtn:hover {
+	background-color: #768696;
+	cursor: pointer;
+}
+
 /* most- list styles */
 .mostList {
 	position: relative;
 	display: inline-block;
 	width: 220px;
-	height: 130px;
 	padding-left: 3px;
 	padding-right: 3px;
 }
@@ -264,11 +282,11 @@ input#keyword {
 }
 
 .tagList {
+	margin-top: 10px;
 	text-align: left;
 	position: relative;
 	display: inline-block;
 	width: 449px;
-	height: 120px;
 	background-color: #EBEBEB;
 	border: solid 1px #ccc;
 }

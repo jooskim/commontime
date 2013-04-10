@@ -180,7 +180,7 @@ if(isset($_POST['loginType'])){
                 </div>
             </form>
             <br>
-            <div class="mostList" id="pop">
+            <div class="mostList" id="pop"><div class="moreBtn">more</div>
             	<span class="mostListHeader">Most Popular</span>
                 <ul>
                 	<?php
@@ -193,7 +193,7 @@ if(isset($_POST['loginType'])){
 					?>
                 </ul>
             </div>
-            <div class="mostList" id="rec">
+            <div class="mostList" id="rec"><div class="moreBtn">more</div>
             	<span class="mostListHeader">Most Recent</span>
             	<ul>
                 	<?php
@@ -204,6 +204,7 @@ if(isset($_POST['loginType'])){
 						echo('<li class="most" style="cursor: pointer" data-link='.htmlentities($data['id']).'>'.htmlentities($data['title']).'</li>');
 					}
 					?>
+                    
                 </ul>
             </div>
             <br><div class="tagList">
@@ -388,6 +389,10 @@ $(document).ready(function(){
 	
 	$('.most').click(function(){
 		location.href="view.php?id="+$(this).attr("data-link");
+	});
+	
+	$('.moreBtn').click(function(){
+		location.href="browse.php";
 	});
 	
 $(document).ajaxSuccess(function(){
