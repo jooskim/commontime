@@ -533,8 +533,8 @@ input#keyword {
 .scoreEntity .figures {
 	display: inline;
 	position: relative;
-	float: left;
-	left: 30px;
+	float: right;
+	right: 120px;
 	top: 144px;
 	width: 0px;
 	height: 0px;
