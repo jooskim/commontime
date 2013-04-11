@@ -320,8 +320,8 @@ if(isset($_GET['keyword'])){
 						
 						$likeList = $data["likeList"];
 						$likeLists = explode(",", $likeList);
-
-						if (in_array($_SESSION['userEmail'], $likeLists)) {
+						
+						if(isset($_SESSION['userEmail']) && in_array($_SESSION['userEmail'], $likeLists)) {
 							$likelink = '<img src="assets/images/like2.png">';
 						} else {
 							$likelink = '<img src="assets/images/like.png">';

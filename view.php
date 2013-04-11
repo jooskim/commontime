@@ -329,7 +329,7 @@ dbclose();
 					}
 					
 					$likeList = explode(",", $data["likeList"]);
-					if (in_array($_SESSION['userEmail'], $likeList)) {
+					if(isset($_SESSION['userEmail']) && in_array($_SESSION['userEmail'], $likeList)){
 						echo("<script>
 								$('#like').html('<img src=assets/images/like2.png><br>Liked this score');
 								$('#like').addClass('liked');
@@ -556,7 +556,7 @@ $(document).ready(function(){
 		if(isLoggedIn == 1){
 			$('.flagItContainer').fadeIn(300);
 		}else{
-			alert('You have to log in to report a score!');
+			alert('You have to log in to like a score!');
 		}
 	});
 	

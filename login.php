@@ -26,7 +26,7 @@ if($_GET['loginType'] == 1){ // OpenID Login
 				$_SESSION['error'] = "You have canceled authentication.";
 				header("Location: index.php");
 			} else if ( ! $openid->validate() ) {
-				$_SESSION['error'] = "You were not logged in by Google.";
+				$_SESSION['error'] = "You are not logged in by Google.";
 				header("Location: index.php");
 			} else {
 				$password = $openid->identity;
@@ -45,10 +45,6 @@ if($_GET['loginType'] == 1){ // OpenID Login
 
 	if(isset($doLogin) && $doLogin === true){
 		dbconnect();
-<<<<<<< HEAD
-=======
-
->>>>>>> 3a8069b3908bcc6769e77238a2b935fa355eea09
 		// put into the database
 		$userEmail = mysql_real_escape_string($userEmail);
 		$firstName = mysql_real_escape_string($firstName);
@@ -123,12 +119,12 @@ if($_GET['loginType'] == 1){ // OpenID Login
 	}
 } else if($_GET['loginType'] == 2){
 	if(isset($_SESSION['newId'])){
+		dbconnect();
 		$newId = mysql_real_escape_string($_SESSION['newId']);
 		$newPw = mysql_real_escape_string($_SESSION['userPw']);
 		unset($_SESSION['newId']);
 		unset($_SESSION['Pw']);
 		
-		dbconnect();
 		$query = "SELECT * FROM CT_User WHERE id = $newId AND UserPw = '$newPw';";
 		
 		$result = mysql_query($query, $connect);
