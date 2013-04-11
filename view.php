@@ -545,7 +545,7 @@ $(document).ready(function(){
 				}
 			});
 		}else{
-			alert('You have to log in to report a score!');
+			alert('You have to log in to like a score!');
 		}
 	});
 
@@ -556,7 +556,7 @@ $(document).ready(function(){
 		if(isLoggedIn == 1){
 			$('.flagItContainer').fadeIn(300);
 		}else{
-			alert('You have to log in to like a score!');
+			alert('You have to log in to report a score!');
 		}
 	});
 	
