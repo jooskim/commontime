@@ -316,9 +316,21 @@ if(isset($_GET['keyword'])){
 					if($numOfResults > 0){
 						$instr = idToValue("instrumentation", "CT_Instrumentation", $data["instrumentation"]);
 						$upBy = idToValue("firstName", "CT_User", $data["uploadedBy"]);
+
+						
+						$likeList = $data["likeList"];
+						$likeLists = explode(",", $likeList);
+
+						if (in_array($_SESSION['userEmail'], $likeLists)) {
+							$likelink = '<img src="assets/images/like2.png">';
+						} else {
+							$likelink = '<img src="assets/images/like.png">';
+						}
+
 						echo('
 							<div class="scoreEntity" data-link='.htmlentities($data['id']).'>
-								<div class="figures"><table border=0 width="100px"><tr><td><img src="assets/images/download.png"></td><td>'.htmlentities($data["downloads"]).'</td><td><img src="assets/images/like.png"></td><td>'.htmlentities($data["likes"]).'</td></tr></table></div>
+								<div class="figures"><table border=0 width="100px"><tr><td><img src="assets/images/download.png"></td><td>'.htmlentities($data["downloads"]).'</td>
+									<td>'.$likelink.'</td><td>'.htmlentities($data["likes"]).'</td></tr></table></div>
                 				<img src="assets/images/defaultalbumart.jpg" class="albumArt" />
 		                   	<div class="textInfo">
 		                   	 	<span class="title">'.htmlentities($data["title"]).'</span><br />

@@ -238,7 +238,7 @@ dbclose();
 				
 				echo('
 					<div class="detailTitle">'.htmlentities($data["title"]).'<div class="actions">
-							<span id="backToList" ><img src="assets/images/back.png"><br>Back to list</span><span id="addToList" ><img src="assets/images/add.png"><br>Add to mylist</span><span id="download"><img src="assets/images/download.png"><br>Download this score</span><span id="flag"><img src="assets/images/flag.png"><br>Report this score</span>
+							<span id="backToList" ><img src="assets/images/back.png"><br>Back to list</span><span id="addToList" ><img src="assets/images/add.png"><br>Add to mylist</span><span id="download"><img src="assets/images/download.png"><br>Download this score</span><span id="like"><img src="assets/images/like.png"><br>Like this score</span><span id="flag"><img src="assets/images/flag.png"><br>Report this score</span>
 						
 						</div><div class="flagItContainer">
 							<div class="flagItHeader">Report this score</div>
@@ -328,6 +328,14 @@ dbclose();
 							  </script>");
 					}
 					
+					$likeList = explode(",", $data["likeList"]);
+					if (in_array($_SESSION['userEmail'], $likeList)) {
+						echo("<script>
+								$('#like').html('<img src=assets/images/like2.png><br>Liked this score');
+								$('#like').addClass('liked');
+							  </script>");
+					}
+
 					echo("
 						<script>document.title='".htmlentities($data['title'])."';</script>
 						");
@@ -524,6 +532,23 @@ $(document).ready(function(){
 	$('#backToList').click(function(){
 		history.back(1);
 	});
+
+	// like button
+	$('#like').click(function(){
+		var isLoggedIn = <?php if(isset($_SESSION['primaryId'])){ echo 1; }else { echo 0; } ?>;
+		if(isLoggedIn == 1){
+			$.ajax({
+				url: 'retrieve.php',
+				data: {'mode': 4, 'likeTo': $('#flagForm #flagTo').val()},
+				success: function(data){
+					location.href='view.php?id='+$('#flagForm #flagTo').val();
+				}
+			});
+		}else{
+			alert('You have to log in to report a score!');
+		}
+	});
+
 	
 	// resolve part
 	$('#flag').click(function(){

@@ -655,6 +655,14 @@ input#keyword {
 	cursor: default;
 }
 
+.actions span#like.liked {
+	background-color: #003366;
+	opacity: 0.9;
+	text-shadow: none;
+	color: #fff;
+	cursor: default;
+}
+
 .actions span#flag {
 	border: 1px solid #980808;
 }

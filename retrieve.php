@@ -88,5 +88,24 @@ if(!isset($_REQUEST['mode'])){
 		dbclose();
 		echo('done');
 	}
+
+	// like
+	if($mode == 4){
+		dbconnect();
+		$likeTo = $_REQUEST['likeTo'];
+		$query = "SELECT * FROM CT_Score WHERE id = ".mysql_real_escape_string($likeTo)." and likeList like '%".$_SESSION['userEmail']."%';";
+		$result = mysql_query($query, $connect);
+
+		if (mysql_num_rows($result)>0) {	
+			// remove like
+			$query2 = "UPDATE CT_Score SET likes = likes - 1, likeList = REPLACE(likeList,',".$_SESSION['userEmail']."', '') WHERE id = ".mysql_real_escape_string($likeTo).";";
+		} else {
+			// add like
+			$query2 = "UPDATE CT_Score SET likes = likes + 1, likeList = concat_ws('',likeList, ',".$_SESSION['userEmail']."') WHERE id = ".mysql_real_escape_string($likeTo).";";
+		}
+		$result2 = mysql_query($query2, $connect);
+		dbclose();
+		echo('done');
+	}
 }
 ?>
