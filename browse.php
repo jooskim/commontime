@@ -145,7 +145,7 @@ if(isset($_GET['keyword'])){
         </div>
     	<div class="topmenus">
         	<ul>
-            	<li>About</li>
+            	<li id="aboutPage">About</li>
                 <div id="signUp">
 					<div id="signUp_header"><br>Sign Up</div>
                     <div id="signUp_body">
@@ -197,6 +197,7 @@ if(isset($_GET['keyword'])){
 							
 						');
 					}else{
+						echo("<li id='logOut'>Log out</li>");
 						echo("<li id='userPanel'>".$_SESSION['firstName']."</li>");
 					}
 				?>
@@ -522,6 +523,10 @@ $(document).ready(function(){
 	});
 	
 	$('#userPanel').click(function(){
+		location.href='mypage.php';
+	});
+	
+	$('#logOut').click(function(){
 		location.href='logout.php';
 	});
 	
@@ -553,6 +558,10 @@ $(document).ready(function(){
 	/* category links */
 	$('#br_all').click(function(){
 		location.href='browse.php';
+	});
+	
+	$('#aboutPage').click(function(){
+		location.href='about.php';
 	});
 	
 $(document).ajaxSuccess(function(){

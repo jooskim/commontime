@@ -50,7 +50,7 @@ dbclose();
         </div>
     	<div class="topmenus">
         	<ul>
-            	<li>About</li>
+            	<li id="aboutPage">About</li>
                 <div id="signUp">
 					<div id="signUp_header"><br>Sign Up</div>
                     <div id="signUp_body">
@@ -102,6 +102,7 @@ dbclose();
 							
 						');
 					}else{
+						echo("<li id='logOut'>Log out</li>");
 						echo("<li id='userPanel'>".$_SESSION['firstName']."</li>");
 					}
 				?>
@@ -503,10 +504,6 @@ $(document).ready(function(){
 		$('#loginWindowN').hide();
 	});
 	
-	$('#userPanel').click(function(){
-		location.href='logout.php';
-	});
-	
 	$('#submit').click(function(){
 		var srchType = $('#srchType').val();
 		var keyword = $('#keyword').val();
@@ -573,6 +570,18 @@ $(document).ready(function(){
 	
 	$('.genres').click(function(){
 		location.href=$(this).attr('data-link');
+	});
+	
+	$('#aboutPage').click(function(){
+		location.href='about.php';
+	});
+	
+	$('#userPanel').click(function(){
+		location.href='mypage.php';
+	});
+	
+	$('#logOut').click(function(){
+		location.href='logout.php';
 	});
 	
 	/* category links */

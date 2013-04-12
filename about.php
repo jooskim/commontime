@@ -30,8 +30,6 @@ if(!isset($_SESSION['primaryId']) && isset($_COOKIE[$CFG->cookiename]) && isset(
 		}else{
 			$data = mysql_fetch_array($result);
 			if($decCookie[1] != md5($data['userPw'])){
-				die("Corrupt identity!");
-				delete_secure_cookie();
 			}else{
 				$_SESSION['primaryId'] = $decCookie[0];
 				$_SESSION['userIdentity'] = $decCookie[1]; // used for authorization
@@ -39,6 +37,8 @@ if(!isset($_SESSION['primaryId']) && isset($_COOKIE[$CFG->cookiename]) && isset(
 				$_SESSION['lastName'] = $data['lastName'];
 				$_SESSION['userEmail'] = $data['userEmail'];
 				$_SESSION['level'] = $data['level'];
+				$_SESSION['joinDate'] = $data['joinDate'];
+				$_SESSION['id'] = $data['id'];
 				dbclose();
 			}
 		}
@@ -93,9 +93,12 @@ if(isset($_POST['loginType'])){
 <div class="page">
 <div id="bg"></div>
 	<div class="top_nav">
+    	<div class="logo_top" onclick="location.href='index.php';">
+        	Common Time
+        </div>
     	<div class="topmenus">
         	<ul>
-            	<li id="aboutPage">About</li>
+            	<li><span id="about">About</span></li>
                 <div id="signUp">
 					<div id="signUp_header"><br>Sign Up</div>
                     <div id="signUp_body">
@@ -147,99 +150,49 @@ if(isset($_POST['loginType'])){
 							
 						');
 					}else{
-						echo("<li id='logOut'>Log out</li>");
-						echo("<li id='userPanel'>".$_SESSION['firstName']."</li>");
+						echo("<li id='logout'>Log out</li><li id='userPanel'>".$_SESSION['firstName']."</li>");
 					}
-				
-				// count how many scores & users are registered
-				/*
-				dbconnect();
-				$totalScoresQuery = "SELECT COUNT(*) FROM CT_Score WHERE 1;";
-				$totalUsersQuery = "SELECT COUNT(*) FROM CT_User WHERE 1;";
-				$resultTotalScores = mysql_query($totalScoresQuery, $connect);
-				$resultTotalUsers = mysql_query($totalUsersQuery, $connect);
-				$dataTotalScores = mysql_fetch_array($resultTotalScores);
-				$dataTotalUsers = mysql_fetch_array($resultTotalUsers);
-				$totalScores = $dataTotalScores[0];
-				$totalUsers = $dataTotalUsers[0];
-				dbclose();
-				*/
 				?>
                 
         	</ul>
         </div>
         <div id="notification_main"></div>
     </div>
-    <div class="main_layout">
-    
-    	<div class="main_center">
-    		<span id="logotitle">
-        	Common Time</span><br><span id="logoheader">Sharing the world's public domain music<br><br></span>
-            
-            <form id="searchForm" method="get" action="browse.php" data-ajax="false" >
-            	<div class="t1">
-            	<select id="srchType" name="srchType" data-inline="true" data-corners="false">
-                    <option value="title">Title</option>
-                	<option value="genre">Genre</option>
-                    <option value="composer">Composer</option>
-                    <option value="composeYear">Compose year</option>
-                    <option value="publishYear">Publish year</option>
-                    <option value="instrumentation">Instrumentation</option>
-                    <option value="tag">Tag</option>
-            	</select>
-                </div>
-                <div class="t2">
-                	<input data-inline="true" type="text" id="keyword" name="keyword" placeholder="Type in keywords here">
-                </div>
-                <div class="t3">
-                    <a data-role="button" onclick="$('#searchForm').submit()" id="submit">Search</a>
-                </div>
-            </form>
-            <br>
-            <div class="mostList" id="pop"><div class="moreBtn">more</div>
-            	<span class="mostListHeader">Most Popular</span>
-                <ul>
-                	<?php
-					dbconnect();
-					$query = "SELECT * FROM CT_Score ORDER BY id DESC;";
-					$result = mysql_query($query, $connect);
-					while($data=mysql_fetch_array($result)){
-						echo('<li class="most" style="cursor: pointer" data-link='.htmlentities($data['id']).'>'.htmlentities($data['title']).'</li>');
-					}
-					?>
-                </ul>
+   <div class="main_layout">
+        <div class="about">
+            <div class="aboutHeader">Musical Sheet Library</div>
+            <div class="aboutPra"> 
+                Digital is synonymous with immediate these days. People expect their gadgets to work instantly, the information they need to be available at their fingertips, and want access to their music and videos at all times. Stuck somewhere between digital music libraries and e-books, sheet music needs a bit of catching up to do in terms of availing itself in the digital world. With both the increasing digitization efforts from paper to electronic (mainly PDF) and the growing use of music composition and notation software, there is a niche to be served through a platform that allows people to reap the full benefit of digitized or born-digital sheet music. We are proposing a web-based platform fill that need.
+                <br></br>
+                The goal of the project is to develop a web-based platform that supports three main purposes: storage, access, and sharing of sheet music, and to do so in a way that it can be open to new types of usage and collaboration efforts. For instance, we will be exploring the IMSLP Petrucci Music Library both as a potential resource for metadata and copyright- free sheet music, and as the benchmark for sheet music deposit and sharing.
             </div>
-            <div class="mostList" id="rec"><div class="moreBtn">more</div>
-            	<span class="mostListHeader">Most Recent</span>
-            	<ul>
-                	<?php
-					dbconnect();
-					$query = "SELECT * FROM CT_Score ORDER BY id DESC;";
-					$result = mysql_query($query, $connect);
-					while($data=mysql_fetch_array($result)){
-						echo('<li class="most" style="cursor: pointer" data-link='.htmlentities($data['id']).'>'.htmlentities($data['title']).'</li>');
-					}
-					?>
+            <div class="aboutHeader">Team Member</div>
+            <div class="aboutPra">
+                <div class="aboutImg">
+                    Jamin Koo<br>
+                    <img src="assets/images/jamin.jpg"/>
                     
-                </ul>
-            </div>
-            <br><div class="tagList">
-            	<span class="tagListHeader">Tags</span>
-            	<?php
-				dbconnect();
-				$queryTags = "SELECT tag FROM CT_ScoreTag;";
-				$resultTags = mysql_query($queryTags, $connect);
-				$tagCounter = 0;
-				while($dataTags = mysql_fetch_array($resultTags)){
-					echo("<span class='tags' data-link='browse.php?srchType=tag&keyword=".$dataTags['tag']."'>".htmlentities($dataTags['tag'])."</span>");
-					$tagCounter++;
-				}
-				?>
-            </div>
-            
-        </div>        
+                </div>  
+                <div class="aboutImg">
+                    Joosung Kim<br>
+                    <img src="assets/images/joosung.jpg"/>
+                    
+                </div>
+                <div class="aboutImg">
+                    Jiyoung Kim<br>
+                    <img src="assets/images/jiyoung.jpg"/>
+                    
+                </div>
+                <div class="aboutImg">
+                    Jaeho Jeong<br>
+                    <img src="assets/images/jay.jpg"/>
+                    
+                </div>
+        </div>     
     </div>
+    <div class="footer">
     
+    </div>
 </div>
 
 <?php
@@ -382,56 +335,19 @@ $(document).ready(function(){
 		location.href='mypage.php';
 	});
 	
-	$('#logOut').click(function(){
+	$('#logout').click(function(){
 		location.href='logout.php';
+	});
+	
+	$('#about').click(function(){
+		location.href='about.php';
 	});
 	
 	$('.tags').click(function(){
 		location.href=$(this).attr('data-link');
 	});
 	
-	$('#keyword').keyup(function(){
-		$.ajax({
-			async: false,
-			url: 'retrieve.php',
-			data: {'mode': 1, 'srchType': $('#srchType').val(), 'keyword': $('#keyword').val()},
-			success: function(data){
-				availableTags = [];
-				var jdata = eval("("+data+")");
-				for(var i in jdata){
-					availableTags.push(jdata[i][0]);
-				}
-			}
-		});
-	});
-	
-	$('.most').click(function(){
-		location.href="view.php?id="+$(this).attr("data-link");
-	});
-	
-	$('.moreBtn').click(function(){
-		location.href="browse.php";
-	});
-	
-	$('#aboutPage').click(function(){
-		location.href='about.php';
-	});
-	
-	
-$(document).ajaxSuccess(function(){
-	$('#keyword').autocomplete({
-		source: availableTags
-	});
-});
-	// on keydown on the keyword area, initiate the tag retrieval process, and once the process is done, launch the autocomplete process
-	
-	// test
-	/*
-	$('#keyword').autocomplete({
-		source: availableTags,
-		
-	});
-	*/
+
 	
 });
 </script>
