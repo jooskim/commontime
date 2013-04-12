@@ -19,7 +19,7 @@ if(!isset($_REQUEST['mode'])){
 	$query["composerNum"] = "SELECT DISTINCT composer FROM CT_Score WHERE `composer` IS NOT NULL;";
 	$query["composeYearNum"] = "SELECT DISTINCT composeYear FROM CT_Score WHERE `composeYear` IS NOT NULL;";
 	$query["publishYearNum"] = "SELECT DISTINCT publishYear FROM CT_Score WHERE `publishYear` IS NOT NULL;";
-	$query["instrumentationNum"] = "SELECT DISTINCT instrumentation FROM CT_Instrumentation;";
+	$query["instrumentationNum"] = "SELECT DISTINCT instrumentation FROM CT_Instrumentation WHERE `instrumentation` IS NOT NULL;";
 	
 	$num["scoreNum"] = mysql_num_rows(mysql_query($query["scoreNum"], $connect));
 	$num["genreNum"] = mysql_num_rows(mysql_query($query["genreNum"], $connect));
@@ -30,18 +30,27 @@ if(!isset($_REQUEST['mode'])){
 
 	dbclose();
 	
-	if($mode == 0){
+	if($mode == 0){ // without search keywords
+		$arr2JSON->append($num);
+		echo(json_encode($arr2JSON));
+	}
+	
+	if($mode == 1){
 		dbconnect();
-		$query = "SELECT * FROM CT_Score WHERE 1 LIMIT 0, 10;";
-		$result = mysql_query($query, $connect);
-		if(!$result){
-			$_SESSION['error'] = "DB transaction failed!";
-			header("Location: index.php");
-		}else{
-			while(($data = mysql_fetch_array($result))){
-				$arr2JSON->append($data);
+		$srchType = $_REQUEST['srchType'];
+		$keyword = $_REQUEST['keyword'];
+		if($srchType != 'tag'){
+			if($srchType == 'genre'){
+				$query = "SELECT ".mysql_real_escape_string($srchType)." FROM CT_Genre WHERE $srchType LIKE '%".mysql_real_escape_string($keyword)."%';";
+			}else{
+				$query = "SELECT ".mysql_real_escape_string($srchType)." FROM CT_Score WHERE $srchType LIKE '%".mysql_real_escape_string($keyword)."%';";
 			}
-			$arr2JSON->append($num);
+		}else{
+			$query = "SELECT ".mysql_real_escape_string($srchType)." FROM CT_ScoreTag WHERE tag LIKE '%".mysql_real_escape_string($keyword)."%';";
+		}
+		$result = mysql_query($query, $connect);
+		while($data = mysql_fetch_array($result)){
+			$arr2JSON->append($data);
 		}
 		dbclose();
 		echo(json_encode($arr2JSON));

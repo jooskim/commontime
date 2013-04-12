@@ -37,6 +37,8 @@ if(!isset($_SESSION['primaryId']) && isset($_COOKIE[$CFG->cookiename]) && isset(
 				$_SESSION['lastName'] = $data['lastName'];
 				$_SESSION['userEmail'] = $data['userEmail'];
 				$_SESSION['level'] = $data['level'];
+				$_SESSION['joinDate'] = $data['joinDate'];
+				$_SESSION['id'] = $data['id'];
 				dbclose();
 			}
 		}
@@ -93,7 +95,7 @@ if(isset($_POST['loginType'])){
 	<div class="top_nav">
     	<div class="topmenus">
         	<ul>
-            	<li><span id="mypage">About</span></li>
+            	<li><span id="about">About</span></li>
                 <div id="signUp">
 					<div id="signUp_header"><br>Sign Up</div>
                     <div id="signUp_body">
@@ -145,7 +147,7 @@ if(isset($_POST['loginType'])){
 							
 						');
 					}else{
-						echo("<li id='userPanel'>".$_SESSION['firstName']."</li>");
+						echo("<li id='userPanel'>".$_SESSION['firstName']."</li><li id='logout'>Logout</li>");
 					}
 				?>
                 
@@ -153,72 +155,119 @@ if(isset($_POST['loginType'])){
         </div>
         <div id="notification_main"></div>
     </div>
-    <div class="main_layout">
-    	<div class="main_center">
-    		<span id="logotitle">
-        	Common Time</span><br><span id="logoheader">Sharing the world's public domain music<br><br></span>
-            
-            <form id="searchForm" method="get" action="browse.php" data-ajax="false" >
-            	<div class="t1">
-            	<select id="srchType" name="srchType" data-inline="true" data-corners="false">
-                    <option value="title">Title</option>
-                	<option value="genre">Genre</option>
-                    <option value="composer">Composer</option>
-                    <option value="composeYear">Compose year</option>
-                    <option value="publishYear">Publish year</option>
-                    <option value="instrumentation">Instrumentation</option>
-                    <option value="tag">Tag</option>
-            	</select>
+   <div class="main_layout">
+	    <div class="main_left">
+    	    <div class="catList">
+        	    <span class="catListHeader">Friend Feeds</span>
+	           	<ul>
+	               	<li><span class="feeds">Jiyoung</span> uploaded a new score </li>
+	                <li><span class="feeds">Jeong</span>  uploaded a new score </li>
+	                <li><span class="feeds">Jamin</span>  uploaded a new score </li>
+	                <li><span class="feeds">Joosung</span>  uploaded a new score </li>
+	                <li><span class="feeds">Smith</span>  uploaded a new score </li>
+                    <li><span class="feeds">John</span>  uploaded a new score </li>
+	            </ul>
+	        </div>
+	    </div>
+        <div class="main_right">
+            <div class="myPage">
+                <div id="profileImg"></div>
+                <div class="myPageTitle">
+                  <?php  echo($_SESSION['firstName'] ) ; ?> 
+                   <?php  echo($_SESSION['lastName']); ?>
                 </div>
-                <div class="t2">
-                	<input data-inline="true" type="text" id="keyword" name="keyword" placeholder="Type in keywords here">
+                <div class="myScore">
+                    My Uploads <br>
+                    <img src="assets/images/upload.png"/>
+                    <div class="number">
+                    <?php
+                        dbconnect();
+                        $myUpload_sql = mysql_query("SELECT COUNT(*) FROM CT_Score;");
+                        /* $userID = $_SESSION['id'] = $data['id'];
+                        $myUpload_sql = mysql_query("SELECT COUNT(*) FROM CT_Score WHERE id ='$userID';"); */
+                        $myUpload = mysql_fetch_array($myUpload_sql);
+                        echo(htmlentities($myUpload[0]));
+	               	?>
+                    </div>
                 </div>
-                <div class="t3">
-                    <a data-role="button" onclick="$('#searchForm').submit()" id="submit">Search</a>
+                <div class="myScore">
+                    My Lists<br>
+                    <img src="assets/images/clip.png"/>
+                    <div class="number">
+                    <?php
+                        dbconnect();
+                        $myUpload_sql = mysql_query("SELECT COUNT(*) FROM CT_MyList;");
+                        /* $userID = $_SESSION['id'] = $data['id'];
+                        $myUpload_sql = mysql_query("SELECT COUNT(*) FROM CT_Score WHERE id ='$userID';"); */
+                        $myUpload = mysql_fetch_array($myUpload_sql);
+                        echo(htmlentities($myUpload[0]));
+	               	?>
+                    </div>
                 </div>
-            </form>
-            <br>
-            <div class="mostList" id="pop">
-            	<span class="mostListHeader">Most Popular</span>
+                <div class="myScore">
+                    My Friends<br>
+                    <img src="assets/images/group.png"/>
+                    <div class="number">20
+                    </div>
+                </div>
+            </div>
+            <div class="myUpload">
+                <span class="myUploadHeader">My Uploads<span class="more"> >> See more</span></span>
+                
+                <ul><?php
+                        dbconnect();
+                        $myId = $_SESSION['id'];
+                        echo(htmlentities($myId));
+                       /* $myUpload_result = mysql_query("SELECT title FROM CT_Score LIMIT 3 ORDER BY timestamp DESC;");
+                        $userID = $_SESSION['id'] = $data['id'];
+                        $myUpload_result = mysql_query("SELECT title FROM CT_Score WHERE id ='$userID' LIMIT 3 ;");*/
+                        $myUpload_result = mysql_query("SELECT title FROM CT_Score LIMIT 3 ;");
+                        $myUpload_time = mysql_query("SELECT timestamp FROM CT_Score LIMIT 3 ;");
+                        $count = 0;
+                        while ($myUpload = mysql_fetch_row($myUpload_result)){
+                            $myUpload_t = mysql_fetch_row($myUpload_time);
+                            echo('<li>');
+                            echo(htmlentities($myUpload[0]));
+                             echo(' (');
+                             echo(htmlentities($myUpload_t[0]));
+                             echo(')</li>');
+                        }
+	               	?>
+	            </ul>
+            </div>
+            <div class="myUpload">
+                <span class="myUploadHeader">My Lists<span class="more"> >> See more</span></span>
                 <ul>
-                	<?php
-					dbconnect();
-					$query = "SELECT title FROM CT_Score ORDER BY id DESC;";
-					$result = mysql_query($query, $connect);
-					while($data=mysql_fetch_array($result)){
-						echo('<li>'.htmlentities($data['title']).'</li>');
-					}
-					?>
-                </ul>
+	               	<?php
+                        dbconnect();
+                        $myList_result = mysql_query("SELECT title FROM CT_Mylist LIMIT 3 ;");
+                        $myList_time = mysql_query("SELECT timestamp FROM CT_Mylist LIMIT 3 ;");
+                        while( $myList = mysql_fetch_row($myList_result)){
+                            $myList_t = mysql_fetch_row($myList_time);
+                            echo('<li>');
+                            echo(htmlentities($myList[0]));
+                             echo(' (');
+                            echo(htmlentities($myList_t[0]));
+                             echo(')</li>');
+                        }
+	               	?>
+	            </ul>
             </div>
-            <div class="mostList" id="rec">
-            	<span class="mostListHeader">Most Recent</span>
-            	<ul>
-                	<?php
-					dbconnect();
-					$query = "SELECT title FROM CT_Score ORDER BY id DESC;";
-					$result = mysql_query($query, $connect);
-					while($data=mysql_fetch_array($result)){
-						echo('<li>'.htmlentities($data['title']).'</li>');
-					}
-					?>
-                </ul>
-            </div>
-            <br><div class="tagList">
-            	<span class="tagListHeader">Tags</span>
-            	<?php
-				dbconnect();
-				$queryTags = "SELECT tag FROM CT_ScoreTag;";
-				$resultTags = mysql_query($queryTags, $connect);
-				$tagCounter = 0;
-				while($dataTags = mysql_fetch_array($resultTags)){
-					echo("<span class='tags' data-link='browse.php?srchType=tag&keyword=".$dataTags['tag']."'>".htmlentities($dataTags['tag'])."</span>");
-					$tagCounter++;
-				}
-				?>
+            <div class="myUpload">
+                <span class="myUploadHeader">User Setting</span>
+                <ul>
+	               	<li>Name :
+	               	<?php  echo($_SESSION['firstName'] ) ; ?> 
+                    <?php  echo($_SESSION['lastName']); ?>
+	               	<span class="feeds">(since <?php  echo($_SESSION['joinDate']); ?>
+	               	)</span> <span class="edit">Edit</span></li>
+	               	<li>Email : 
+	               	<?php  echo($_SESSION['userEmail'] ) ; ?> <span class="edit">Edit</span>
+	               	</li>
+	               	<li>Password : ******</span><span class="edit">Edit</span> </li>
+	            </ul>
             </div>
         </div>
-        
     </div>
     <div class="footer">
     
@@ -362,46 +411,22 @@ $(document).ready(function(){
 	});
 	
 	$('#userPanel').click(function(){
+		location.href='mypage.php';
+	});
+	
+	$('#logout').click(function(){
 		location.href='logout.php';
 	});
 	
-	$('#mypage').click(function(){
-		location.href='mypage.php';
+	$('#about').click(function(){
+		location.href='about.php';
 	});
 	
 	$('.tags').click(function(){
 		location.href=$(this).attr('data-link');
 	});
 	
-	$('#keyword').keyup(function(){
-		$.ajax({
-			async: false,
-			url: 'retrieve.php',
-			data: {'mode': 1, 'srchType': $('#srchType').val(), 'keyword': $('#keyword').val()},
-			success: function(data){
-				availableTags = [];
-				var jdata = eval("("+data+")");
-				for(var i in jdata){
-					availableTags.push(jdata[i][0]);
-				}
-			}
-		});
-	});
-	
-$(document).ajaxSuccess(function(){
-	$('#keyword').autocomplete({
-		source: availableTags
-	});
-});
-	// on keydown on the keyword area, initiate the tag retrieval process, and once the process is done, launch the autocomplete process
-	
-	// test
-	/*
-	$('#keyword').autocomplete({
-		source: availableTags,
-		
-	});
-	*/
+
 	
 });
 </script>
