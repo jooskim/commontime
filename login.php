@@ -138,7 +138,7 @@ if($_GET['loginType'] == 1){ // OpenID Login
 			$_SESSION['lastName'] = $data['lastName'];
 			$_SESSION['userEmail'] = $data['userEmail'];
 			$_SESSION['level'] = $data['level'];
-			$_SESSION['joinDate'] = $joinDate;
+			$_SESSION['joinDate'] = $data['joinDate'];
 			
 			// update the last access time
 			$query = "UPDATE CT_User SET lastAccess = NOW() WHERE id = ".$data['id'].";";
@@ -185,6 +185,7 @@ if($_GET['loginType'] == 1){ // OpenID Login
 						$_SESSION['lastName'] = $data['lastName'];
 						$_SESSION['userEmail'] = $data['userEmail'];
 						$_SESSION['level'] = $data['level'];
+						$_SESSION['joinDate'] = $data['joinDate'];
 						
 						
 						if(isset($keepSignedIn) && $keepSignedIn == 1){

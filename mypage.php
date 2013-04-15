@@ -436,7 +436,7 @@ $(document).ready(function(){
 		location.href='about.php';
 	});
 	
-	$('#logout').click(function(){
+	$('#logOut').click(function(){
 		location.href='logout.php';
 	});
 	
@@ -448,6 +448,20 @@ $(document).ready(function(){
 		location.href=$(this).attr('data-link');
 	});
 	
+	
+	$('#profileImg').css('background', 'url("<?php
+	dbconnect();
+	$queryAva = "SELECT avatarPic FROM CT_User WHERE id = ".$_SESSION['primaryId'].";";
+	$resultAva = mysql_query($queryAva,$connect);
+	$dataAva = mysql_fetch_array($resultAva);
+	if(is_file($dataAva[0])){
+		echo $dataAva[0];
+	}else{
+		echo "assets/images/profile.jpg";
+	}
+	
+	?>
+	") no-repeat');
 
 	
 });
