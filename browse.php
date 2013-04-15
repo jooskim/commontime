@@ -77,12 +77,12 @@ if(isset($_GET['keyword'])){
 	dbconnect();
 	if($srchType != 'tag'){
 		if($srchType == 'genre'){
-			$tempQuery = "SELECT id FROM CT_Genre WHERE genre LIKE '%".mysql_real_escape_string($keyword)."%';";
+			$tempQuery = "SELECT refScore FROM CT_Genre WHERE genre LIKE '%".mysql_real_escape_string($keyword)."%';";
 			$tempResult = mysql_query($tempQuery, $connect);
 			$fetchQuery = "SELECT * FROM CT_Score WHERE ";
 		
 			while($tempData = mysql_fetch_array($tempResult)){
-				$fetchQuery .= "genre = ".$tempData['id']." OR ";
+				$fetchQuery .= "id = ".$tempData['refScore']." OR ";
 			}
 			if(mysql_num_rows($tempResult) == 0){
 				$fetchQuery = "SELECT id FROM CT_Score WHERE 0;";
@@ -92,11 +92,15 @@ if(isset($_GET['keyword'])){
 			}
 		}else{
 			if($srchType == 'instrumentation'){
-				$tempQuery = "SELECT id FROM CT_Instrumentation WHERE instrumentation = '".mysql_real_escape_string($keyword)."';";
+				$tempQuery = "SELECT refScore FROM CT_Instrumentation WHERE instrumentation = '".mysql_real_escape_string($keyword)."';";
 				$tempResult = mysql_query($tempQuery, $connect);
-				$tempData = mysql_fetch_array($tempResult);
 				if(mysql_num_rows($tempResult) > 0){
-					$fetchQuery = "SELECT * FROM CT_Score WHERE instrumentation = ".mysql_real_escape_string($tempData['id']).";";
+					$tempStr = ' ';
+					while($tempData = mysql_fetch_array($tempResult)){
+						$tempStr.= "id = ".$tempData[0]." OR ";
+					}
+					$tempStr = substr($tempStr, 0, strlen($tempStr)-4).";";
+					$fetchQuery = "SELECT * FROM CT_Score WHERE".$tempStr;
 				}else{
 					$fetchQuery = "SELECT id FROM CT_Score WHERE 0;";
 				}
@@ -218,10 +222,10 @@ if(isset($_GET['keyword'])){
 					$query_Cat = "SELECT * FROM CT_Genre;";
 					$result_Cat = mysql_query($query_Cat, $connect);
 					while($data = mysql_fetch_array($result_Cat)){
-						$query_scoresOfSubcat = "SELECT COUNT(*) FROM CT_Score WHERE genre = '".$data["id"]."';";
+						$query_scoresOfSubcat = "SELECT COUNT(*) FROM CT_Genre WHERE genre = '".$data["genre"]."';";
 						$result_scoresOfSubcat = mysql_query($query_scoresOfSubcat, $connect);
 						$numOfScoresOfSubcat = mysql_fetch_array($result_scoresOfSubcat);
-						echo('<li class="subGenre" onclick=location.href="browse.php?srchType=genre&keyword='.$data["genre"].'">'.htmlentities($data["genre"]).' ('.$numOfScoresOfSubcat[0].')</li>');
+						echo('<li class="subGenre" data-link="browse.php?srchType=genre&keyword='.htmlentities($data["genre"]).'">'.htmlentities($data["genre"]).' ('.$numOfScoresOfSubcat[0].')</li>');
 					}
 					dbclose();
 					?>
@@ -234,7 +238,7 @@ if(isset($_GET['keyword'])){
 						$query_scoresOfSubcat = "SELECT COUNT(*) FROM CT_Score WHERE composer = '".$data["composer"]."';";
 						$result_scoresOfSubcat = mysql_query($query_scoresOfSubcat, $connect);
 						$numOfScoresOfSubcat = mysql_fetch_array($result_scoresOfSubcat);
-						echo('<li class="subComposer" onclick=location.href="browse.php?srchType=composer&keyword='.$data["composer"].'">'.htmlentities($data["composer"]).' ('.$numOfScoresOfSubcat[0].')</li>');
+						echo('<li class="subComposer" data-link="browse.php?srchType=composer&keyword='.htmlentities($data["composer"]).'">'.htmlentities($data["composer"]).' ('.$numOfScoresOfSubcat[0].')</li>');
 					}
 					dbclose();
 					?>
@@ -247,7 +251,7 @@ if(isset($_GET['keyword'])){
 						$query_scoresOfSubcat = "SELECT COUNT(*) FROM CT_Score WHERE composeYear = '".$data["composeYear"]."';";
 						$result_scoresOfSubcat = mysql_query($query_scoresOfSubcat, $connect);
 						$numOfScoresOfSubcat = mysql_fetch_array($result_scoresOfSubcat);
-						echo('<li class="subComposeYear" onclick=location.href="browse.php?srchType=composeYear&keyword='.$data["composeYear"].'">'.htmlentities($data["composeYear"]).' ('.$numOfScoresOfSubcat[0].')</li>');
+						echo('<li class="subComposeYear" data-link="browse.php?srchType=composeYear&keyword='.$data["composeYear"].'">'.htmlentities($data["composeYear"]).' ('.$numOfScoresOfSubcat[0].')</li>');
 					}
 					dbclose();
 					?>
@@ -260,20 +264,20 @@ if(isset($_GET['keyword'])){
 						$query_scoresOfSubcat = "SELECT COUNT(*) FROM CT_Score WHERE publishYear = '".$data["publishYear"]."';";
 						$result_scoresOfSubcat = mysql_query($query_scoresOfSubcat, $connect);
 						$numOfScoresOfSubcat = mysql_fetch_array($result_scoresOfSubcat);
-						echo('<li class="subPublishYear" onclick=location.href="browse.php?srchType=publishYear&keyword='.$data["publishYear"].'">'.htmlentities($data["publishYear"]).' ('.$numOfScoresOfSubcat[0].')</li>');
+						echo('<li class="subPublishYear" data-link="browse.php?srchType=publishYear&keyword='.$data["publishYear"].'">'.htmlentities($data["publishYear"]).' ('.$numOfScoresOfSubcat[0].')</li>');
 					}
 					dbclose();
 					?>
                     <li id="br_instrumentation" onclick="$('.subInstrumentation').toggle();">Instrumentation (<span id="numInst"></span>)</li>
                     <?php
 					dbconnect();
-					$query_Cat = "SELECT * FROM CT_Instrumentation;";
+					$query_Cat = "SELECT DISTINCT instrumentation FROM CT_Instrumentation;";
 					$result_Cat = mysql_query($query_Cat, $connect);
 					while($data = mysql_fetch_array($result_Cat)){
-						$query_scoresOfSubcat = "SELECT COUNT(*) FROM CT_Score WHERE instrumentation = '".$data["id"]."';";
+						$query_scoresOfSubcat = "SELECT COUNT(*) FROM CT_Instrumentation WHERE instrumentation = '".$data["instrumentation"]."';";
 						$result_scoresOfSubcat = mysql_query($query_scoresOfSubcat, $connect);
 						$numOfScoresOfSubcat = mysql_fetch_array($result_scoresOfSubcat);
-						echo('<li class="subInstrumentation" onclick=location.href="browse.php?srchType=instrumentation&keyword='.$data["instrumentation"].'">'.htmlentities($data["instrumentation"]).' ('.$numOfScoresOfSubcat[0].')</li>');
+						echo('<li class="subInstrumentation" data-link="browse.php?srchType=instrumentation&keyword='.$data["instrumentation"].'">'.htmlentities($data["instrumentation"]).' ('.$numOfScoresOfSubcat[0].')</li>');
 					}
 					dbclose();
 					?>
@@ -308,11 +312,11 @@ if(isset($_GET['keyword'])){
 					
 					// only for genre data
 					dbconnect();
-					$genre_Query = "SELECT genre FROM CT_Genre WHERE id = ".$data['genre'];
+					$genre_Query = "SELECT * FROM CT_Genre WHERE refScore = ".$data['id'];
 					$genre_Result = mysql_query($genre_Query, $connect);
-					$genreData = mysql_fetch_array($genre_Result);
-					$data['genre'] = $genreData[0];
-					dbclose();
+					$instr_Query = "SELECT * FROM CT_Instrumentation WHERE refScore = ".$data['id'];
+					$instr_Result = mysql_query($instr_Query, $connect);
+
 					
 					if($numOfResults > 0){
 						$instr = idToValue("instrumentation", "CT_Instrumentation", $data["instrumentation"]);
@@ -336,10 +340,18 @@ if(isset($_GET['keyword'])){
 		                   	<div class="textInfo">
 		                   	 	<span class="title">'.htmlentities($data["title"]).'</span><br />
 		                        <span class="key">Composer</span><span class="value">'.htmlentities($data["composer"]).'</span><br /> <!-- composer -->
-		                        <span class="key">Genre</span><span class="value">'.htmlentities($data["genre"]).'</span><br /> <!-- genre -->
+		                        <span class="key">Genre</span><span class="value">');
+							while($dataGenre = @mysql_fetch_array($genre_Result)){
+								echo("<span class='genres' data-link='browse.php?srchType=genre&keyword=".htmlentities($dataGenre["genre"])."'>".htmlentities($dataGenre["genre"])." </span>");
+							}
+							echo('</span><br /> <!-- genre -->
 		                        <span class="key">Compose year</span><span class="value">'.htmlentities($data["composeYear"]).'</span><br /> <!-- compose year -->
 		                        <span class="key">Publish year</span><span class="value">'.htmlentities($data["publishYear"]).'</span><br /> <!-- publish year -->
-		                        <span class="key">Instrumentation</span><span class="value">'.$instr[0].'</span><br /> <!-- instrumentation -->
+		                        <span class="key">Instrumentation</span><span class="value">');
+							while($dataInstr = @mysql_fetch_array($instr_Result)){
+								echo("<span class='genres' data-link='browse.php?srchType=instrumentation&keyword=".htmlentities($dataInstr["instrumentation"])."'>".htmlentities($dataInstr["instrumentation"])." </span>");
+							}
+							echo('</span><br /> <!-- instrumentation -->
 		                        <span class="key">Opus number</span><span class="value">'.htmlentities($data["opusNum"]).'</span><br /> <!-- opusnum -->
 		                        <span class="key">Uploaded by</span><span class="value">'.$upBy[0].'</span><br /> <!-- uploaded by -->
 		                    </div>
@@ -536,6 +548,10 @@ $(document).ready(function(){
 		location.href="browse.php?srchType="+srchType+"&keyword="+keyword;
 	});
 	
+	$('.genres').click(function(){
+		location.href = $(this).attr('data-link');
+	});
+	
 	$('#keyword').keyup(function(){
 		$.ajax({
 			async: false,
@@ -562,6 +578,26 @@ $(document).ready(function(){
 	
 	$('#aboutPage').click(function(){
 		location.href='about.php';
+	});
+	
+	$('.subGenre').click(function(){
+		location.href=$(this).attr('data-link');
+	});
+	
+	$('.subComposer').click(function(){
+		location.href=$(this).attr('data-link');
+	});
+	
+	$('.subComposeYear').click(function(){
+		location.href=$(this).attr('data-link');
+	});
+	
+	$('.subPublishYear').click(function(){
+		location.href=$(this).attr('data-link');
+	});
+	
+	$('.subInstrumentation').click(function(){
+		location.href=$(this).attr('data-link');
 	});
 	
 $(document).ajaxSuccess(function(){

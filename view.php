@@ -213,7 +213,7 @@ dbclose();
 				$up_Result = mysql_query($up_Query, $connect);
 					
 				// only for genre data
-				$genre_Query = getSQLFromID("genre", $data['genre']);
+				$genre_Query = getSQLFromID("genre", $data['id']);
 				$genre_Result = mysql_query($genre_Query, $connect);
 				
 				// only for style data
@@ -221,7 +221,7 @@ dbclose();
 				$style_Result = mysql_query($style_Query, $connect);
 				
 				// only for instrumentation data
-				$instr_Query = getSQLFromID("instrumentation", $data['instrumentation']);
+				$instr_Query = getSQLFromID("instrumentation", $data['id']);
 				$instr_Result = mysql_query($instr_Query, $connect);
 				
 				// only for tag data
@@ -246,14 +246,14 @@ dbclose();
 							<div class="flagIt"><span class="warning">You are about to report the following score.<br></span><span style="color: #455F7B; font-weight: bold; font-size: 16px; margin-top: 7px; display: inline-block; margin-bottom: 7px;">'.htmlentities($data["title"]).'</span><span class="warning"><br>Please make sure that you have proper sources as you describe the reason(s) for this claim in the text field below. This report will be reviewed by the operators as soon as it is submitted. Also, by reporting this score as problematic, you agree that other users can participate in the rebuttal process to prevent, if any, misjudgements.</span><hr style="width: 99%;" color="#BBBBBB" size="1" no-shade></hr><form id="flagForm" data-ajax="false"><textarea data-role="none" rows=9 cols=77 id="flagDesc" name="flagDesc"></textarea><br>'); if(isset($_SESSION['primaryId'])){ echo('<input type="hidden" id="flagTo" name="flagTo" value='.htmlentities($data['id']).'><input type="hidden" id="flagBy" name="flagBy" value='.$_SESSION['primaryId'].'>');} echo('<input type="submit" value="Report" id="submitFlag"><input type="button" value="Cancel" id="cancelButton" onclick=$(".flagItContainer").fadeOut(300)></form></div>
 						</div></div>
 					
-					<div class="scoreDetail"><div id="scoreimg"></div>
-						<span class="subTitle">General Information</span><br>
+					<div class="scoreDetail">
+						<span class="subTitle">General Information</span><br><div id="scoreimg"></div>
 						<div class="txt">
 							<span class="key">Composer</span><span class="value">'.htmlentities($data["composer"]).'</span><br>
 							<span class="key">Compose Year</span><span class="value">'.htmlentities($data["composeYear"]).'</span><br>
 							<span class="key">Genre</span><span class="value">');
 							while($dataGenre = @mysql_fetch_array($genre_Result)){
-								echo("<span class='genres' data-link='browse.php?srchType=genre&keyword=".htmlentities($dataGenre[0])."'>".htmlentities($dataGenre[0])." </span>");
+								echo("<span class='genres' data-link='browse.php?srchType=genre&keyword=".htmlentities($dataGenre["genre"])."'>".htmlentities($dataGenre["genre"])." </span>");
 							}
 							echo('</span><br>
 							<span class="key">Opus Number</span><span class="value">'.htmlentities($data["opusNum"]).'</span><br>
@@ -266,7 +266,7 @@ dbclose();
 							echo('</span><br>
 							<span class="key">Instrumentation</span><span class="value">');
 							while($dataInstr = @mysql_fetch_array($instr_Result)){
-								echo(htmlentities($dataInstr[0].", "));
+								echo("<span class='genres' data-link='browse.php?srchType=instrumentation&keyword=".htmlentities($dataInstr["instrumentation"])."'>".htmlentities($dataInstr["instrumentation"])." </span>");
 							}
 							echo('</span><br>
 						</div>

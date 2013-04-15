@@ -204,7 +204,12 @@ if(isset($_POST['loginType'])){
 					$query = "SELECT * FROM CT_Score ORDER BY id DESC;";
 					$result = mysql_query($query, $connect);
 					while($data=mysql_fetch_array($result)){
-						echo('<li class="most" style="cursor: pointer" data-link='.htmlentities($data['id']).'>'.htmlentities($data['title']).'</li>');
+						if(strlen($data['title'])>30){
+							$title = substr($data['title'], 0, 30)."...";
+						}else{
+							$title = $data['title'];
+						}
+						echo('<li class="most" style="cursor: pointer" data-link='.htmlentities($data['id']).'>'.htmlentities($title).'</li>');
 					}
 					?>
                 </ul>
@@ -217,7 +222,12 @@ if(isset($_POST['loginType'])){
 					$query = "SELECT * FROM CT_Score ORDER BY id DESC;";
 					$result = mysql_query($query, $connect);
 					while($data=mysql_fetch_array($result)){
-						echo('<li class="most" style="cursor: pointer" data-link='.htmlentities($data['id']).'>'.htmlentities($data['title']).'</li>');
+						if(strlen($data['title'])>30){
+							$title = substr($data['title'], 0, 30)."...";
+						}else{
+							$title = $data['title'];
+						}
+						echo('<li class="most" style="cursor: pointer" data-link='.htmlentities($data['id']).'>'.htmlentities($title).'</li>');
 					}
 					?>
                     

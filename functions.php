@@ -107,9 +107,9 @@ function getSQLFromID($type, $param) {
 	}else if($type == "flagHistory"){
 		return "SELECT * FROM CT_FlagHistory WHERE refScore = ".mysql_real_escape_string($param)." ORDER BY timestamp DESC;";
 	}else if($type == "genre"){
-		return "SELECT genre FROM CT_Genre WHERE id = ".mysql_real_escape_string($param).";";
+		return "SELECT * FROM CT_Genre WHERE refScore = ".mysql_real_escape_string($param).";";
 	}else if($type == "instrumentation"){
-		return "SELECT instrumentation FROM CT_Instrumentation WHERE id = ".mysql_real_escape_string($param).";";
+		return "SELECT * FROM CT_Instrumentation WHERE refScore = ".mysql_real_escape_string($param).";";
 	}else if($type == "comment"){
 		return "SELECT * FROM CT_ScoreComment WHERE refScore = ".mysql_real_escape_string($param)." ORDER BY timestamp DESC;";
 	}else if($type == "style"){

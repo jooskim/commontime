@@ -42,6 +42,8 @@ if(!isset($_REQUEST['mode'])){
 		if($srchType != 'tag'){
 			if($srchType == 'genre'){
 				$query = "SELECT ".mysql_real_escape_string($srchType)." FROM CT_Genre WHERE $srchType LIKE '%".mysql_real_escape_string($keyword)."%';";
+			}else if($srchType == 'instrumentation'){
+				$query = "SELECT ".mysql_real_escape_string($srchType)." FROM CT_Instrumentation WHERE $srchType LIKE '%".mysql_real_escape_string($keyword)."%';";
 			}else{
 				$query = "SELECT ".mysql_real_escape_string($srchType)." FROM CT_Score WHERE $srchType LIKE '%".mysql_real_escape_string($keyword)."%';";
 			}
