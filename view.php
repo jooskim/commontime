@@ -123,10 +123,10 @@ dbclose();
 					$query_Cat = "SELECT * FROM CT_Genre;";
 					$result_Cat = mysql_query($query_Cat, $connect);
 					while($data = mysql_fetch_array($result_Cat)){
-						$query_scoresOfSubcat = "SELECT COUNT(*) FROM CT_Score WHERE genre = '".$data["id"]."';";
+						$query_scoresOfSubcat = "SELECT COUNT(*) FROM CT_Genre WHERE genre = '".$data["genre"]."';";
 						$result_scoresOfSubcat = mysql_query($query_scoresOfSubcat, $connect);
 						$numOfScoresOfSubcat = mysql_fetch_array($result_scoresOfSubcat);
-						echo('<li class="subGenre" onclick=location.href="browse.php?srchType=genre&keyword='.$data["genre"].'">'.htmlentities($data["genre"]).' ('.$numOfScoresOfSubcat[0].')</li>');
+						echo('<li class="subGenre" data-link="browse.php?srchType=genre&keyword='.$data["genre"].'">'.htmlentities($data["genre"]).' ('.$numOfScoresOfSubcat[0].')</li>');
 					}
 					dbclose();
 					?>
@@ -139,7 +139,7 @@ dbclose();
 						$query_scoresOfSubcat = "SELECT COUNT(*) FROM CT_Score WHERE composer = '".$data["composer"]."';";
 						$result_scoresOfSubcat = mysql_query($query_scoresOfSubcat, $connect);
 						$numOfScoresOfSubcat = mysql_fetch_array($result_scoresOfSubcat);
-						echo('<li class="subComposer" onclick=location.href="browse.php?srchType=composer&keyword='.$data["composer"].'">'.htmlentities($data["composer"]).' ('.$numOfScoresOfSubcat[0].')</li>');
+						echo('<li class="subComposer" data-link="browse.php?srchType=composer&keyword='.$data["composer"].'">'.htmlentities($data["composer"]).' ('.$numOfScoresOfSubcat[0].')</li>');
 					}
 					dbclose();
 					?>
@@ -152,7 +152,7 @@ dbclose();
 						$query_scoresOfSubcat = "SELECT COUNT(*) FROM CT_Score WHERE composeYear = '".$data["composeYear"]."';";
 						$result_scoresOfSubcat = mysql_query($query_scoresOfSubcat, $connect);
 						$numOfScoresOfSubcat = mysql_fetch_array($result_scoresOfSubcat);
-						echo('<li class="subComposeYear" onclick=location.href="browse.php?srchType=composeYear&keyword='.$data["composeYear"].'">'.htmlentities($data["composeYear"]).' ('.$numOfScoresOfSubcat[0].')</li>');
+						echo('<li class="subComposeYear" data-link="browse.php?srchType=composeYear&keyword='.$data["composeYear"].'">'.htmlentities($data["composeYear"]).' ('.$numOfScoresOfSubcat[0].')</li>');
 					}
 					dbclose();
 					?>
@@ -165,20 +165,20 @@ dbclose();
 						$query_scoresOfSubcat = "SELECT COUNT(*) FROM CT_Score WHERE publishYear = '".$data["publishYear"]."';";
 						$result_scoresOfSubcat = mysql_query($query_scoresOfSubcat, $connect);
 						$numOfScoresOfSubcat = mysql_fetch_array($result_scoresOfSubcat);
-						echo('<li class="subPublishYear" onclick=location.href="browse.php?srchType=publishYear&keyword='.$data["publishYear"].'">'.htmlentities($data["publishYear"]).' ('.$numOfScoresOfSubcat[0].')</li>');
+						echo('<li class="subPublishYear" data-link="browse.php?srchType=publishYear&keyword='.$data["publishYear"].'">'.htmlentities($data["publishYear"]).' ('.$numOfScoresOfSubcat[0].')</li>');
 					}
 					dbclose();
 					?>
                     <li id="br_instrumentation" onclick="$('.subInstrumentation').toggle();">Instrumentation (<span id="numInst"></span>)</li>
                     <?php
 					dbconnect();
-					$query_Cat = "SELECT * FROM CT_Instrumentation;";
+					$query_Cat = "SELECT DISTINCT instrumentation FROM CT_Instrumentation;";
 					$result_Cat = mysql_query($query_Cat, $connect);
 					while($data = mysql_fetch_array($result_Cat)){
-						$query_scoresOfSubcat = "SELECT COUNT(*) FROM CT_Score WHERE instrumentation = '".$data["instrumentation"]."';";
+						$query_scoresOfSubcat = "SELECT COUNT(*) FROM CT_Instrumentation WHERE instrumentation = '".$data["instrumentation"]."';";
 						$result_scoresOfSubcat = mysql_query($query_scoresOfSubcat, $connect);
 						$numOfScoresOfSubcat = mysql_fetch_array($result_scoresOfSubcat);
-						echo('<li class="subInstrumentation" onclick=location.href="browse.php?srchType=instrumentation&keyword='.$data["instrumentation"].'">'.htmlentities($data["instrumentation"]).' ('.$numOfScoresOfSubcat[0].')</li>');
+						echo('<li class="subInstrumentation" data-link="browse.php?srchType=instrumentation&keyword='.$data["instrumentation"].'">'.htmlentities($data["instrumentation"]).' ('.$numOfScoresOfSubcat[0].')</li>');
 					}
 					dbclose();
 					?>
@@ -587,6 +587,26 @@ $(document).ready(function(){
 	/* category links */
 	$('#br_all').click(function(){
 		location.href='browse.php';
+	});
+	
+	$('.subGenre').click(function(){
+		location.href=$(this).attr('data-link');
+	});
+	
+	$('.subComposer').click(function(){
+		location.href=$(this).attr('data-link');
+	});
+	
+	$('.subComposeYear').click(function(){
+		location.href=$(this).attr('data-link');
+	});
+	
+	$('.subPublishYear').click(function(){
+		location.href=$(this).attr('data-link');
+	});
+	
+	$('.subInstrumentation').click(function(){
+		location.href=$(this).attr('data-link');
 	});
 	
 $(document).ajaxSuccess(function(){
