@@ -248,11 +248,26 @@ if(isset($_POST['loginType'])){
                     <?php
                         dbconnect();
 						$mylistId = getSpecific("CT_Mylist", "id", "creator = ".$_SESSION['primaryId']);
-                        $myUpload_sql = mysql_query("SELECT COUNT(*) FROM CT_MylistEntity WHERE refScrapbook = ".mysql_real_escape_string($mylistId).";");
+						// if mylist does not exist, create it here
+						if($mylistId == ''){
+							$insert = "INSERT INTO CT_Mylist (creator, title, timestamp) VALUES(".mysql_real_escape_string($_SESSION['primaryId']).", 'default mylist', UNIX_TIMESTAMP());";
+							if(!mysql_query($insert, $connect)){
+								die("mylist creation failure!");
+							}else{
+								$mylistId = mysql_insert_id($connect);
+							}
+						}
+						
+						$SQL_myUpload = "SELECT COUNT(*) FROM CT_MylistEntity WHERE refScrapbook = ".mysql_real_escape_string($mylistId).";";
+                        $myUpload_sql = mysql_query($SQL_myUpload,$connect);
                         /* $userID = $_SESSION['id'] = $data['id'];
                         $myUpload_sql = mysql_query("SELECT COUNT(*) FROM CT_Score WHERE id ='$userID';"); */
                         $myUpload = mysql_fetch_array($myUpload_sql);
-                        echo(htmlentities($myUpload[0]));
+                        if(mysql_num_rows($myUpload_sql) > 0){
+							echo(htmlentities($myUpload[0]));
+						}else {
+							echo 0;
+						}
 	               	?>
                     </div>
                 </div>
@@ -302,7 +317,7 @@ if(isset($_POST['loginType'])){
 							echo("<li>No item in mylist</li>");
 						}else{
 							while($dataMyL = @mysql_fetch_array($myLResult)){
-								echo('<li>'.htmlentities(getSpecific("CT_Score","title", "id = ".$dataMyL['refScore'])).' <span class="feeds">(added at '.date("Y-m-d H:i:s",$dataMyL['timestamp']).')</span></li>');
+								echo('<li>'.htmlentities(getSpecific("CT_Score","title", "id = ".$dataMyL['refScore'])).' <span class="feeds">(added on '.date("Y-m-d H:i:s",$dataMyL['timestamp']).')</span></li>');
 							}
 						}
 						/*

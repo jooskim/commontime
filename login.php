@@ -156,13 +156,13 @@ if($_GET['loginType'] == 1){ // OpenID Login
 			$_SESSION['error'] = "Internal error: credential data was not properly sent!";
 			header("Location: index.php");
 		}else{
+			dbconnect();
 			$inputEmail = mysql_real_escape_string($_SESSION['inputEmail']);
 			$inputPw = mysql_real_escape_string($_SESSION['inputPw']);
 			$keepSignedIn = mysql_real_escape_string($_GET['keepSignedIn']);
 			unset($_SESSION['inputEmail']);
 			unset($_SESSION['inputPw']);
 			
-			dbconnect();
 			$query = "SELECT * FROM CT_User WHERE userEmail = '$inputEmail';";
 			$result = mysql_query($query, $connect);
 			if(!$result){

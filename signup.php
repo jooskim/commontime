@@ -4,13 +4,14 @@ session_start();
 require_once("config.php");
 require_once("functions.php");
 
+dbconnect();
 $firstName = mysql_real_escape_string($_POST['new_firstName']);
 $lastName = mysql_real_escape_string($_POST['new_lastName']);
 $Email = mysql_real_escape_string($_POST['new_Email']);
 $Pw = mysql_real_escape_string($_POST['new_Pw']);
 
 // checks whether there is an account with the same email account
-dbconnect();
+
 $query = "SELECT id FROM CT_User WHERE userEmail = '$Email';";
 $result = mysql_query($query, $connect);
 if(!$result){
