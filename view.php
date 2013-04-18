@@ -239,7 +239,7 @@ dbclose();
 				
 				echo('
 					<div class="detailTitle">'.htmlentities($data["title"]).'<div class="actions">
-							<span id="backToList" ><img src="assets/images/back.png"><br>Back to list</span><span id="addToList" ><img src="assets/images/add.png"><br>Add to mylist</span><span id="download"><img src="assets/images/download.png"><br>Download this score</span><span id="like"><img src="assets/images/like.png"><br>Like this score</span><span id="flag"><img src="assets/images/flag.png"><br>Report this score</span>
+							<span id="backToList" ><img src="assets/images/back.png"><br>Back to list</span><span id="addToList" data-link='.$data['id'].'><img src="assets/images/add.png"><br>Add to mylist</span><span id="download"><img src="assets/images/download.png"><br>Download this score</span><span id="like"><img src="assets/images/like.png"><br>Like this score</span><span id="flag"><img src="assets/images/flag.png"><br>Report this score</span>
 						
 						</div><div class="flagItContainer">
 							<div class="flagItHeader">Report this score</div>
@@ -277,7 +277,78 @@ dbclose();
 							<span class="key">Publish Year</span><span class="value">'.htmlentities($data["publishYear"]).'</span><br>
 							<span class="key">Uploaded by</span><span class="value">');
 							$dataUp = mysql_fetch_array($up_Result);
-							echo(htmlentities($dataUp[0]).'</span><br>
+							echo("<span class='friend'>".htmlentities($dataUp[0]).'</span>
+							<div class="friendProfileContainer">
+								<div class="friendProfile">
+									<img src="'.getSpecific("CT_User","avatarPic","id=".$data["uploadedBy"]).'">
+									<div class="name">'.htmlentities(getSpecific("CT_User","firstName", "id=".$data["uploadedBy"])).' '.htmlentities(getSpecific("CT_User","lastName", "id=".$data["uploadedBy"])).'</div>
+									<div class="buttonArea">
+										<ul>');
+										// checks whether the user has the uploader as friend
+										if(isset($_SESSION['primaryId'])){
+											if($data['uploadedBy'] == $_SESSION['primaryId']){
+												echo("<li id='isFriend' class='myself'>Myself</li>
+												");
+											}else{
+												dbconnect();
+										$isFriendQuery = "SELECT id FROM CT_Friends WHERE refUser = ".mysql_real_escape_string($_SESSION['primaryId'])." AND targetUser = ".mysql_real_escape_string($data["uploadedBy"]).";";
+										$resultIsFriendQuery = mysql_query($isFriendQuery, $connect);
+										if(mysql_num_rows($resultIsFriendQuery) != 0){
+											echo("<li id='isFriend' class='already'>Friend already</li>
+											");
+										}else{
+											echo("<li id='isFriend'>Add friends</li>");
+										}
+										
+										echo("<script>$('li[id=isFriend]').not('li[class=myself]').click(function(){
+												$.ajax({
+													url: 'retrieve.php',
+													data: {'mode': 5, 'refUser': ".$_SESSION['primaryId'].", 'targetUser': ".$data['uploadedBy']."},
+													success: function(data){
+														if(data == 0){
+															$('li[id=isFriend]').not('li[class=myself]').addClass('already').text('Friend already');
+															$('li[id=isFriend]').not('li[class=myself]').mouseleave(function(){
+																$(this).text('Friend already');
+															});
+											
+															$('li[id=isFriend]').not('li[class=myself]').mouseenter(function(){
+															$(this).text('Unfriend');
+														});
+														}else if(data == 1){
+															$('li[id=isFriend]').not('li[class=myself]').removeAttr('class');
+															$('li[id=isFriend]').not('li[class=myself]').text('Add friends');
+															
+															$('li[id=isFriend]').not('li[class=myself]').mouseenter(function(){
+																$(this).text('Add friends');
+															});
+															$('li[id=isFriend]').not('li[class=myself]').mouseleave(function(){
+																$(this).text('Add friends');
+															});
+	
+														}else{
+															alert('quack?');
+														}
+													}
+												});
+											});
+
+											
+											
+											</script>");
+											
+										dbclose();
+											}
+										}else{
+											echo("<li>Log in first</li>");
+										}
+										
+										
+										echo('	
+											<li id="close" onclick=$(".friendProfileContainer").fadeOut(300)>Close</li>
+										</ul>
+									</div>
+								</div>
+							</div><br>
 							<span class="key">Description</span><span class="value">'.htmlentities($data["description"]).'</span><br>
 						</div>
 					</div>
@@ -336,10 +407,22 @@ dbclose();
 								$('#like').addClass('liked');
 							  </script>");
 					}
+					
+					$mylistId = getSpecific("CT_Mylist", "id", "creator = ".$_SESSION['primaryId']);
+					dbconnect();
+					$queryIsMylistItem = "SELECT id FROM CT_MylistEntity WHERE refScrapbook = ".$mylistId." AND refScore = ".$data['id'].";";
+					$resultMylistItem = mysql_query($queryIsMylistItem, $connect);
+					if(mysql_num_rows($resultMylistItem) > 0){
+						echo("<script>
+								$('#addToList').html('<img src=assets/images/add.png><br>Added to mylist');
+								$('#addToList').addClass('added');
+							</script>");
+					}
 
 					echo("
 						<script>document.title='".htmlentities($data['title'])."';</script>
 						");
+						dbclose();
 				?>
 	            
             </div>
@@ -545,6 +628,29 @@ $(document).ready(function(){
 			alert('You have to log in to like a score!');
 		}
 	});
+	
+	// mylist button
+	$('#addToList').click(function(){
+		var isLoggedIn = <?php if(isset($_SESSION['primaryId'])){ echo 1; }else { echo 0; } ?>;
+		if(isLoggedIn == 1){
+			$.ajax({
+				url: 'retrieve.php',
+				data: {'mode': 6, 'creator': <?php echo($_SESSION['primaryId']); ?>, 'refScore': $(this).attr('data-link')},
+				success: function(data){
+					if(data == 1){
+						$('#addToList').html("<img src='assets/images/add.png'><br>Added to mylist");
+						$('#addToList').addClass('added');
+					}else if(data == 2){
+						$('#addToList').html("<img src='assets/images/add.png'><br>Add to mylist");
+						$('#addToList').removeClass('added');
+					}
+				}
+			});
+			
+		}else{
+			alert('You have to log in to add scores to mylist!');
+		}
+	});
 
 	
 	// resolve part
@@ -609,11 +715,22 @@ $(document).ready(function(){
 		location.href=$(this).attr('data-link');
 	});
 	
+	$('.friend').click(function(){
+		$('.friendProfileContainer').fadeIn(300);
+	});
+	
 $(document).ajaxSuccess(function(){
 	$('#keyword').autocomplete({
 		source: availableTags
 	});
 	
+	$('#isFriend[class=already]').not('#isFriend[class=myself]').mouseenter(function(){
+		$(this).text("Unfriend");
+	});
+	
+	$('#isFriend[class=already]').not('#isFriend[class=myself]').mouseleave(function(){
+		$(this).text("Friend already");
+	});
 
 });
 	

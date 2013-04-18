@@ -109,5 +109,73 @@ if(!isset($_REQUEST['mode'])){
 		dbclose();
 		echo('done');
 	}
+	
+	// friend/unfriend
+	if($mode == 5){
+		dbconnect();
+		$refUser = $_REQUEST['refUser'];
+		$targetUser = $_REQUEST['targetUser'];
+		$query = "SELECT id FROM CT_Friends WHERE refUser = ".mysql_real_escape_string($refUser)." AND targetUser = ".mysql_real_escape_string($targetUser).";";
+		$result = mysql_query($query, $connect);
+		if(mysql_num_rows($result) != 0){
+			$delete = "DELETE FROM CT_Friends WHERE refUser = ".mysql_real_escape_string($refUser)." AND targetUser = ".mysql_real_escape_string($targetUser).";";
+			if(!mysql_query($delete, $connect)){
+				die("delete error!");
+			}else{
+				echo 1;
+			}
+		}else{
+			$insert = "INSERT INTO CT_Friends (refUser, targetUser) VALUES(".mysql_real_escape_string($refUser).", ".mysql_real_escape_string($targetUser).");";
+			if(!mysql_query($insert, $connect)){
+				die("insert error!");
+			}else{
+				echo 0;
+			}
+		}
+	}
+	
+	// mylist
+	if($mode == 6){
+		dbconnect();
+		$creator = $_REQUEST['creator'];
+		$refScore = $_REQUEST['refScore'];
+		
+		//checks whether there exists a mylist for this account, and creates it if it does not exist
+		$check = "SELECT id FROM CT_Mylist WHERE creator = ".mysql_real_escape_string($creator).";";
+		$resultCheck = mysql_query($check, $connect);
+		if(mysql_num_rows($resultCheck) == 0){
+			$insert = "INSERT INTO CT_Mylist (creator, title, timestamp) VALUES(".mysql_real_escape_string($creator).", 'default mylist', UNIX_TIMESTAMP());";
+			if(!mysql_query($insert, $connect)){
+				die("mylist creation failure!");
+			}else{
+				$newId = mysql_insert_id($connect);
+				$insertScore = "INSERT INTO CT_MylistEntity (refScrapbook, refScore, timestamp) VALUES(".$newId.", ".mysql_real_escape_string($refScore).", UNIX_TIMESTAMP());";
+				if(!mysql_query($insertScore, $connect)){
+					die("adding a score into mylist failed!");
+				}else{
+					echo 1;
+				}
+			}
+		}else{
+			$data = @mysql_fetch_array($resultCheck);
+			$check = "SELECT id FROM CT_MylistEntity WHERE refScrapbook = ".$data[0]." AND refScore = ".mysql_real_escape_string($refScore).";";
+			$checkResult = mysql_query($check, $connect);
+			if(mysql_num_rows($checkResult) > 0){
+				$updateScore = "DELETE FROM CT_MylistEntity WHERE refScrapbook = ".$data[0]." AND refScore = ".mysql_real_escape_string($refScore).";";
+				if(!mysql_query($updateScore, $connect)){
+					die("deleting a score from mylist failed!");
+				}else{
+					echo 2;
+				}
+			}else{
+				$insertScore = "INSERT INTO CT_MylistEntity (refScrapbook, refScore, timestamp) VALUES(".$data[0].", ".mysql_real_escape_string($refScore).", UNIX_TIMESTAMP());";
+				if(!mysql_query($insertScore, $connect)){
+					die("adding a score into mylist failed!");
+				}else{
+					echo 1;
+				}
+			}
+		}
+	}
 }
 ?>

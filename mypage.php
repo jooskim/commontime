@@ -165,18 +165,61 @@ if(isset($_POST['loginType'])){
     </div>
    <div class="main_layout">
 	    <div class="main_left">
-    	    <div class="catList">
-        	    <span class="catListHeader">Friend Feeds</span>
-	           	<ul>
-	               	<li><span class="feeds">Jiyoung</span> uploaded a new score </li>
-	                <li><span class="feeds">Jeong</span>  uploaded a new score </li>
-	                <li><span class="feeds">Jamin</span>  uploaded a new score </li>
-	                <li><span class="feeds">Joosung</span>  uploaded a new score </li>
-	                <li><span class="feeds">Smith</span>  uploaded a new score </li>
-                    <li><span class="feeds">John</span>  uploaded a new score </li>
-	            </ul>
-	        </div>
+            <div class="catList" style="text-align: left;">
+	            <span class="catListHeader">Friends</span>
+    	        <?php
+				// get the list of friends
+				dbconnect();
+				$query = "SELECT * FROM CT_Friends WHERE refUser = ".$_SESSION['primaryId'].";";
+				$result = mysql_query($query, $connect);
+				$totalNum = mysql_num_rows($result);
+				
+				while($data = mysql_fetch_array($result)){
+					$avatar = getSpecific("CT_User", "avatarPic", "id=".mysql_real_escape_string($data["targetUser"]));
+					$firstName = getSpecific("CT_User", "firstName", "id=".mysql_real_escape_string($data["targetUser"]));
+					$lastName = getSpecific("CT_User", "lastName", "id=".mysql_real_escape_string($data["targetUser"]));
+					echo('
+						<div class="friendProfile" id='.$data["targetUser"].' style="width: 127px; height: 127px;">
+							<img width=131 src="'.$avatar.'">
+							<div class="name">'.htmlentities($firstName).' '.htmlentities($lastName).'</div>
+							<div class="btns" data-link='.$data["targetUser"].' style="cursor: pointer; display: none;width: 131px; height: 131px; position: relative; float: left; background-color: rgba(0,0,0,0.7); top: -153px;">
+								<div class="unfriend" style="position: relative; text-shadow: 2px 2px 0px #000000; display: inline-block; top: 14px; color: #900000; font-size: 20px; padding-left: 20px; padding-right: 20px; padding-top: 40px; padding-bottom: 40px;">
+								Unfriend
+								</div>
+
+							</div>
+						</div>
+					');
+				}
+				?>
+        	    <script>
+				$('.friendProfile').mouseover(function(){
+					$(this).find('.btns').fadeIn(300);
+				});
+				
+				$('.friendProfile').mouseleave(function(){
+					$(this).find('.btns').fadeOut(300);
+				});
+				
+				$('.btns').click(function(){
+					var targetId = $(this).attr("data-link");
+					
+					$.ajax({
+						url: 'retrieve.php',
+						data: {'mode': 5, 'refUser': <?php echo($_SESSION['primaryId']); ?>, 'targetUser': targetId},
+						success: function(data){
+							if(data == 1){		
+								$('.friendProfile[id='+targetId+']').fadeOut(300);
+								$('.myScore .number:eq(2)').text(parseInt($('.myScore .number:eq(2)').text())-1);
+							}
+						}
+					});
+				});
+				</script>
+					
+            </div>
 	    </div>
+        
         <div class="main_right">
             <div class="myPage">
                 <div id="profileImg"></div>
@@ -204,7 +247,8 @@ if(isset($_POST['loginType'])){
                     <div class="number">
                     <?php
                         dbconnect();
-                        $myUpload_sql = mysql_query("SELECT COUNT(*) FROM CT_Mylist WHERE creator = ".mysql_real_escape_string($_SESSION['primaryId']).";");
+						$mylistId = getSpecific("CT_Mylist", "id", "creator = ".$_SESSION['primaryId']);
+                        $myUpload_sql = mysql_query("SELECT COUNT(*) FROM CT_MylistEntity WHERE refScrapbook = ".mysql_real_escape_string($mylistId).";");
                         /* $userID = $_SESSION['id'] = $data['id'];
                         $myUpload_sql = mysql_query("SELECT COUNT(*) FROM CT_Score WHERE id ='$userID';"); */
                         $myUpload = mysql_fetch_array($myUpload_sql);
@@ -215,7 +259,7 @@ if(isset($_POST['loginType'])){
                 <div class="myScore">
                     My Friends<br>
                     <img src="assets/images/group.png"/>
-                    <div class="number">20
+                    <div class="number">0
                     </div>
                 </div>
             </div>
@@ -252,7 +296,17 @@ if(isset($_POST['loginType'])){
                 <ul>
 	               	<?php
                         dbconnect();
-                        $myList_result = mysql_query("SELECT title FROM CT_Mylist WHERE creator = ".mysql_real_escape_string($myId)." LIMIT 3;");
+                        $myLQuery = "SELECT * FROM CT_MylistEntity WHERE refScrapbook = ".$mylistId." LIMIT 3;";
+						$myLResult = mysql_query($myLQuery, $connect);
+						if(mysql_num_rows($myLResult) == 0){
+							echo("<li>No item in mylist</li>");
+						}else{
+							while($dataMyL = @mysql_fetch_array($myLResult)){
+								echo('<li>'.htmlentities(getSpecific("CT_Score","title", "id = ".$dataMyL['refScore'])).' <span class="feeds">(added at '.date("Y-m-d H:i:s",$dataMyL['timestamp']).')</span></li>');
+							}
+						}
+						/*
+						$myList_result = mysql_query("SELECT title FROM CT_Mylist WHERE creator = ".mysql_real_escape_string($myId)." LIMIT 3;");
                         $myList_time = mysql_query("SELECT timestamp FROM CT_Mylist WHERE creator = ".mysql_real_escape_string($myId)." LIMIT 3;");
                         
 						if(mysql_num_rows($myList_result) == 0){
@@ -267,7 +321,7 @@ if(isset($_POST['loginType'])){
                             	echo(htmlentities($myList_t[0]));
                              	echo(')</li>');
                         	}
-						}
+						}*/
 	               	?>
 	            </ul>
             </div>
@@ -462,6 +516,8 @@ $(document).ready(function(){
 	
 	?>
 	") no-repeat');
+	
+	$('.myScore .number:eq(2)').text('<?php echo($totalNum); ?>');
 
 	
 });

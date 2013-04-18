@@ -95,6 +95,25 @@ function getPartJSON($table, $fields, $filter)
 	return $return;
 }
 
+function getSpecific($table, $fields, $filter){
+	global $json_container, $connect;
+	$return = '';
+	
+	dbconnect();
+	$query = "SELECT ".mysql_real_escape_string($fields)." FROM ".mysql_real_escape_string($table)." WHERE ".mysql_real_escape_string($filter).";";
+	$result = mysql_query($query, $connect);
+	if($result === false)
+	{
+		return 'There is no such a table';
+	}
+	else
+	{
+		$data = @mysql_fetch_array($result);
+		return $data[0];
+	}
+	dbclose();
+}
+
 function getSQLFromID($type, $param) {
 	if($type == "firstName"){
 		return "SELECT firstName FROM CT_User WHERE id = ".mysql_real_escape_string($param).";";
