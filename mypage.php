@@ -183,7 +183,7 @@ if(isset($_POST['loginType'])){
 							<img width=131 src="'.$avatar.'">
 							<div class="name">'.htmlentities($firstName).' '.htmlentities($lastName).'</div>
 							<div class="btns" data-link='.$data["targetUser"].' style="cursor: pointer; display: none;width: 131px; height: 131px; position: relative; float: left; background-color: rgba(0,0,0,0.7); top: -153px;">
-								<div class="unfriend" style="position: relative; text-shadow: 2px 2px 0px #000000; display: inline-block; top: 14px; color: #900000; font-size: 20px; padding-left: 20px; padding-right: 20px; padding-top: 40px; padding-bottom: 40px;">
+								<div class="unfriend" style="position: relative; text-shadow: 2px 2px 0px #000000; display: inline-block; top: 14px; left: 8px; color: #900000; font-size: 20px; padding-left: 20px; padding-right: 20px; padding-top: 40px; padding-bottom: 40px;">
 								Unfriend
 								</div>
 

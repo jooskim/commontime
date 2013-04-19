@@ -440,7 +440,7 @@ $(window).resize(function(){
 	$('.main_right').css('width', (innerWidth - 317)+'px');
 	$('.srchbox #textinput').css({'width': (innerWidth - 530)+'px'});
 	$('.srchbox #textinput .ui-input-text').css({'width': (innerWidth - 665)+'px'});
-	$('.main_right .textInfo').css({'width': (innerWidth - 500)+'px'});
+	$('.main_right .textInfo').css({'width': (innerWidth - 358)+'px'});
 });
 
 $(document).ready(function(){
@@ -515,7 +515,7 @@ $(document).ready(function(){
 	$('.main_right').css('width', (innerWidth - 317)+'px');
 	$('.srchbox #textinput').css({'width': (innerWidth - 530)+'px'});
 	$('.srchbox #textinput .ui-input-text').css({'width': (innerWidth - 665)+'px'});
-	$('.main_right .textInfo').css({'width': (innerWidth - 500)+'px'});
+	$('.main_right .textInfo').css({'width': (innerWidth - 358)+'px'});
 
 	
 	/* sign in/up and help event handlers */

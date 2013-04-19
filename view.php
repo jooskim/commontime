@@ -238,15 +238,16 @@ dbclose();
 				dbclose();
 				
 				echo('
-					<div class="detailTitle">'.htmlentities($data["title"]).'<div class="actions">
-							<span id="backToList" ><img src="assets/images/back.png"><br>Back to list</span><span id="addToList" data-link='.$data['id'].'><img src="assets/images/add.png"><br>Add to mylist</span><span id="download"><img src="assets/images/download.png"><br>Download this score</span><span id="like"><img src="assets/images/like.png"><br>Like this score</span><span id="flag"><img src="assets/images/flag.png"><br>Report this score</span>
-						
-						</div><div class="flagItContainer">
+					<div class="detailTitle">'.htmlentities($data["title"]).'<div class="flagItContainer">
 							<div class="flagItHeader">Report this score</div>
 							<div class="flagIt"><span class="warning">You are about to report the following score.<br></span><span style="color: #455F7B; font-weight: bold; font-size: 16px; margin-top: 7px; display: inline-block; margin-bottom: 7px;">'.htmlentities($data["title"]).'</span><span class="warning"><br>Please make sure that you have proper sources as you describe the reason(s) for this claim in the text field below. This report will be reviewed by the operators as soon as it is submitted. Also, by reporting this score as problematic, you agree that other users can participate in the rebuttal process to prevent, if any, misjudgements.</span><hr style="width: 99%;" color="#BBBBBB" size="1" no-shade></hr><form id="flagForm" data-ajax="false"><textarea data-role="none" rows=9 cols=77 id="flagDesc" name="flagDesc"></textarea><br>'); if(isset($_SESSION['primaryId'])){ echo('<input type="hidden" id="flagTo" name="flagTo" value='.htmlentities($data['id']).'><input type="hidden" id="flagBy" name="flagBy" value='.$_SESSION['primaryId'].'>');} echo('<input type="submit" value="Report" id="submitFlag"><input type="button" value="Cancel" id="cancelButton" onclick=$(".flagItContainer").fadeOut(300)></form></div>
 						</div></div>
-					
+					<div class="actions">
+							<span id="backToList" ><img src="assets/images/back.png"><br>Back to list</span></div><div class="actionsContent"><span id="addToList" data-link='.$data['id'].'><img src="assets/images/add.png"><br>Add to mylist</span><span id="download"><img src="assets/images/download.png"><br>Download this score</span><span id="like"><img src="assets/images/like.png"><br>Like this score</span><span id="flag"><img src="assets/images/flag.png"><br>Report this score</span>
+						
+						</div><br><br><br><br>
 					<div class="scoreDetail">
+					
 						<span class="subTitle">General Information</span><br><div id="scoreimg"></div>
 						<div class="txt">
 							<span class="key">Composer</span><span class="value">'.htmlentities($data["composer"]).'</span><br>
@@ -408,7 +409,11 @@ dbclose();
 							  </script>");
 					}
 					
-					$mylistId = getSpecific("CT_Mylist", "id", "creator = ".$_SESSION['primaryId']);
+					if(isset($_SESSION['primaryId'])){
+						$mylistId = getSpecific("CT_Mylist", "id", "creator = ".$_SESSION['primaryId']);
+					}else{
+						$mylistId = -1;
+					}
 					dbconnect();
 					$queryIsMylistItem = "SELECT id FROM CT_MylistEntity WHERE refScrapbook = ".$mylistId." AND refScore = ".$data['id'].";";
 					$resultMylistItem = mysql_query($queryIsMylistItem, $connect);
@@ -635,7 +640,7 @@ $(document).ready(function(){
 		if(isLoggedIn == 1){
 			$.ajax({
 				url: 'retrieve.php',
-				data: {'mode': 6, 'creator': <?php echo($_SESSION['primaryId']); ?>, 'refScore': $(this).attr('data-link')},
+				data: {'mode': 6, 'creator': <?php if(isset($_SESSION['primaryId'])){ echo($_SESSION['primaryId']); } else { echo -1; } ?>, 'refScore': $(this).attr('data-link')},
 				success: function(data){
 					if(data == 1){
 						$('#addToList').html("<img src='assets/images/add.png'><br>Added to mylist");
@@ -643,6 +648,8 @@ $(document).ready(function(){
 					}else if(data == 2){
 						$('#addToList').html("<img src='assets/images/add.png'><br>Add to mylist");
 						$('#addToList').removeClass('added');
+					}else if(data == -1){
+						alert('You have to log in to add scores to mylist!');
 					}
 				}
 			});

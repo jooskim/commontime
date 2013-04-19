@@ -140,6 +140,10 @@ if(!isset($_REQUEST['mode'])){
 		$creator = $_REQUEST['creator'];
 		$refScore = $_REQUEST['refScore'];
 		
+		if($creator == -1){
+			echo -1;
+		}
+		
 		//checks whether there exists a mylist for this account, and creates it if it does not exist
 		$check = "SELECT id FROM CT_Mylist WHERE creator = ".mysql_real_escape_string($creator).";";
 		$resultCheck = mysql_query($check, $connect);
