@@ -217,7 +217,7 @@ dbclose();
 				$genre_Result = mysql_query($genre_Query, $connect);
 				
 				// only for style data
-				$style_Query = getSQLFromID("style", $data['style']);
+				$style_Query = getSQLFromID("style", $data['id']);
 				$style_Result = mysql_query($style_Query, $connect);
 				
 				// only for instrumentation data
@@ -262,7 +262,7 @@ dbclose();
 							<span class="key">Language</span><span class="value">'.htmlentities($data["language"]).'</span><br>
 							<span class="key">Piece Style</span><span class="value">');
 							while($dataStyle = @mysql_fetch_array($style_Result)){
-								echo(htmlentities($dataStyle[0].", "));
+								echo("<span class='genres not'>".htmlentities($dataStyle["style"])." </span>");
 							}
 							echo('</span><br>
 							<span class="key">Instrumentation</span><span class="value">');
@@ -686,7 +686,7 @@ $(document).ready(function(){
 		location.href=$(this).attr('data-link');
 	});
 	
-	$('.genres').click(function(){
+	$('.genres').not('.not').click(function(){
 		location.href=$(this).attr('data-link');
 	});
 	

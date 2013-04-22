@@ -132,7 +132,7 @@ function getSQLFromID($type, $param) {
 	}else if($type == "comment"){
 		return "SELECT * FROM CT_ScoreComment WHERE refScore = ".mysql_real_escape_string($param)." ORDER BY timestamp DESC;";
 	}else if($type == "style"){
-		return "SELECT style FROM CT_Style WHERE id = ".mysql_real_escape_string($param).";";
+		return "SELECT * FROM CT_Style WHERE refScore = ".mysql_real_escape_string($param).";";
 	}else if($type == "tag"){
 		return "SELECT tag FROM CT_ScoreTag WHERE refScore = ".mysql_real_escape_string($param).";";
 	}

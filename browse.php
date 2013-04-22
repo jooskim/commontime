@@ -319,7 +319,6 @@ if(isset($_GET['keyword'])){
 
 					
 					if($numOfResults > 0){
-						$instr = idToValue("instrumentation", "CT_Instrumentation", $data["instrumentation"]);
 						$upBy = idToValue("firstName", "CT_User", $data["uploadedBy"]);
 
 						
