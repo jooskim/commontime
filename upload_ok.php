@@ -71,10 +71,32 @@ if(!($result = mysql_query($query, $connect))){
 }else{
 //	header("Location: mypage.php");
 	echo "DB insert success!<br>";
-	$ct_score_ref_id = 
+	$ct_score_ref_id = mysql_insert_id();
+	echo $ct_score_ref_id."<br>";
 
 	// Genre
-	$query = "INSERT INTO CT"
+	$genre_split = explode(",",$genre);
+	for ( $i = 0; $i < sizeof($genre_split); $i++ )
+	{
+		$query = "INSERT INTO ct_genre (refScore, genre) VALUES ($ct_score_ref_id, '".trim($genre_split[$i])."');";
+		mysql_query($query, $connect);
+	}
+
+	// Instrumentation
+	$instrumentation_split = explode(",",$instrumentation);
+	for ( $i = 0; $i < sizeof($instrumentation_split); $i++ )
+	{
+		$query = "INSERT INTO ct_instrumentation (refScore, instrumentation) VALUES ($ct_score_ref_id, '".trim($instrumentation_split[$i])."');";
+		mysql_query($query, $connect);
+	}
+
+	// Piece Style
+	$style_split = explode(",",$pieceStyle);
+	for ( $i = 0; $i < sizeof($style_split); $i++ )
+	{
+		$query = "INSERT INTO ct_style (refScore, style) VALUES ($ct_score_ref_id, '".trim($style_split[$i])."');";
+		mysql_query($query, $connect);
+	}
 }
 dbclose();
 ?>
