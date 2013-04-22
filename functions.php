@@ -147,4 +147,5 @@ function idToValue($val, $table, $condition){
 	dbclose();
 	return $data;
 }
+
 ?>

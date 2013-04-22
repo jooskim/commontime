@@ -151,6 +151,7 @@ if(isset($_POST['loginType'])){
 						');
 					}else{
 						echo("<li id='logout'>Log out</li><li id='userPanel'>".$_SESSION['firstName']."</li>");
+						echo("<li id='upload' onclick=location.href='upload.php'>Upload a score</li>");
 					}
 				?>
                 

@@ -2,6 +2,10 @@
 session_start();
 require_once("cookie.php");
 require_once("functions.php");
+
+if(!isset($_SESSION['primaryId'])){
+	echo("<script>alert('You have to log in to upload a score!'); location.href='index.php';</script>");
+}
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -85,6 +89,7 @@ require_once("functions.php");
 					}else{
 						echo("<li id='logOut'>Log out</li>");
 						echo("<li id='userPanel'>".$_SESSION['firstName']."</li>");
+						echo("<li id='upload' onclick=location.href='upload.php'>Upload a score</li>");
 					}
 				?>
                 
@@ -173,16 +178,16 @@ require_once("functions.php");
 						<span class="subTitle">Music Score Information</span><br>
 						<div class="txt">
 							<table>
-								<tr><td><span class="key">Copyright</span></td><td><span class="value2"><input type="radio" name="txtIsPublic" id="txtIsPublic" value="0">Private <input type="radio" name="txtIsPublic" id="txtIsPublic" value="1">Public</span></td></tr>
+								<tr><td><span class="key">Share option</span></td><td><span class="value2"><label><input type="radio" name="txtIsPublic" id="txtIsPublic" value="0" data-role="none">Private</label><label><input data-role="none" type="radio" name="txtIsPublic" id="txtIsPublic" value="1">Public</label></span></td></tr>
 								<tr><td><span class="key">Publish Year</span></td><td><span class="value2"><input type="text" name="txtPublishYear" id="txtPublishYear"></span></td></tr>
-								<tr><td><span class="key">Score Image</span></td><td><span class="value2"><input type="file" name="txtScoreImage" id="txtScoreImage"></span></td></tr>
+								<tr><td><span class="key">Score</span></td><td><span class="value2"><input type="file" name="txtScoreImage" id="txtScoreImage"></span></td></tr>
 								<tr><td><span class="key">Description</span></td><td><span class="value2"><textarea name="txtDescription" id="txtDescription" wrap="physical"></textarea></span></td></tr>
 							</table>
 						</div>
 					</div>
 					<div class="scoreDetail">
 						<span class="subTitle">Tags</span><br>
-						<div class="txt"><input type="text" name="txtTags" id="txtTags"></div>
+						<div class="txt"><input type="text" name="txtTags" id="txtTags" placeholder="Use comma(,) to enter multiple tags"></div>
 					</div>
 					<input type="submit">
 					</form>	            

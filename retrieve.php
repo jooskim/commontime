@@ -181,5 +181,20 @@ if(!isset($_REQUEST['mode'])){
 			}
 		}
 	}
+	
+	// increase the download counter
+	if($mode == 7){
+		dbconnect();
+		$refScore = $_REQUEST['refScore'];
+		$query = "UPDATE CT_Score SET downloads=downloads+1 WHERE id = ".mysql_real_escape_string($refScore).";";
+		$result = mysql_query($query, $connect);
+		if(!$result){
+			die("error updating the download counter!");
+			dbclose();
+		}else{
+			echo 1;
+			dbclose();
+		}
+	}
 }
 ?>

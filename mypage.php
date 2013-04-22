@@ -156,6 +156,7 @@ if(isset($_POST['loginType'])){
 					}else{
 						echo("<li id='logOut'>Log out</li>");
 						echo("<li id='userPanel'>".$_SESSION['firstName']."</li>");
+						echo("<li id='upload' onclick=location.href='upload.php'>Upload a score</li>");
 					}
 				?>
                 
@@ -277,7 +278,6 @@ if(isset($_POST['loginType'])){
                     <div class="number">0
                     </div>
                 </div>
-                <div>&nbsp;&nbsp;&nbsp;<a href="upload.php">[Upload Score]</a></div>
             </div>
             <div class="myUpload">
                 <span class="myUploadHeader">My Uploads<span class="more"> >> See more</span></span>
@@ -299,9 +299,9 @@ if(isset($_POST['loginType'])){
                             	$myUpload_t = @mysql_fetch_row($myUpload_time);
                            	  echo('<li>');
                           	  echo(htmlentities($myUpload[0]));
-                              echo(' (');
-                              echo(htmlentities($myUpload_t[0]));
-                              echo(')</li>');
+                              echo('<span class="feeds">(added on ');
+                              echo(date("Y-m-d H:i:s", $myUpload_t[0]));
+                              echo(')</span></li>');
                         	}
 						}
 	               	?>

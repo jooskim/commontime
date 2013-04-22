@@ -203,6 +203,7 @@ if(isset($_GET['keyword'])){
 					}else{
 						echo("<li id='logOut'>Log out</li>");
 						echo("<li id='userPanel'>".$_SESSION['firstName']."</li>");
+						echo("<li id='upload' onclick=location.href='upload.php'>Upload a score</li>");
 					}
 				?>
                 

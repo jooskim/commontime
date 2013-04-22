@@ -65,7 +65,7 @@ echo 'tags:'. $tags."<br>";
 // insert
 
 $query = "INSERT INTO CT_Score (title, isPublic, composer, composeYear, publishYear, description, downloadLink, timestamp, uploadedBy, language, opusNum, `key`) 
-						VALUES ('$title', $isPublic, '$composer', $composeYear, $publishYear, '$description', '$target', NOW(), $uploadedBy, '$language', '$opusNumber', '$key');";
+						VALUES ('$title', $isPublic, '$composer', $composeYear, $publishYear, '$description', '$target', UNIX_TIMESTAMP(), $uploadedBy, '$language', '$opusNumber', '$key');";
 //echo "<br><br>".$query."<br><br>";
 
 if(!($result = mysql_query($query, $connect))){
@@ -109,7 +109,7 @@ if(!($result = mysql_query($query, $connect))){
 		mysql_query($query, $connect);
 	}
 
-	$_SESSION['error'] = "upload success!";
+	$_SESSION['success'] = "Upload success!";
 //	echo "DB insert success!<br>";
 	header("Location: mypage.php");
 	exit;
