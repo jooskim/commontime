@@ -152,7 +152,7 @@ require_once("functions.php");
         <div class="main_right">
             <div class="itemList">
 				<br><div class="detailTitle">Upload Score</div>
-					<form id="FormUpload" method="post" action="upload_ok.php" data-ajax="false">
+					<form id="FormUpload" enctype="multipart/form-data" method="post" action="upload_ok.php" data-ajax="false">
 					<div class="scoreDetail">
 						<span class="subTitle">General Information</span><br>
 						<div class="txt">
