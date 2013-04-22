@@ -81,7 +81,7 @@ if(!($result = mysql_query($query, $connect))){
 	$genre_split = explode(",",$genre);
 	for ( $i = 0; $i < sizeof($genre_split); $i++ )
 	{
-		$query = "INSERT INTO ct_genre (refScore, genre) VALUES ($ct_score_ref_id, '".trim($genre_split[$i])."');";
+		$query = "INSERT INTO CT_Genre (refScore, genre) VALUES ($ct_score_ref_id, '".trim($genre_split[$i])."');";
 		mysql_query($query, $connect);
 	}
 
@@ -89,7 +89,7 @@ if(!($result = mysql_query($query, $connect))){
 	$instrumentation_split = explode(",",$instrumentation);
 	for ( $i = 0; $i < sizeof($instrumentation_split); $i++ )
 	{
-		$query = "INSERT INTO ct_instrumentation (refScore, instrumentation) VALUES ($ct_score_ref_id, '".trim($instrumentation_split[$i])."');";
+		$query = "INSERT INTO CT_Instrumentation (refScore, instrumentation) VALUES ($ct_score_ref_id, '".trim($instrumentation_split[$i])."');";
 		mysql_query($query, $connect);
 	}
 
@@ -97,7 +97,7 @@ if(!($result = mysql_query($query, $connect))){
 	$style_split = explode(",",$pieceStyle);
 	for ( $i = 0; $i < sizeof($style_split); $i++ )
 	{
-		$query = "INSERT INTO ct_style (refScore, style) VALUES ($ct_score_ref_id, '".trim($style_split[$i])."');";
+		$query = "INSERT INTO CT_Style (refScore, style) VALUES ($ct_score_ref_id, '".trim($style_split[$i])."');";
 		mysql_query($query, $connect);
 	}
 
@@ -105,13 +105,13 @@ if(!($result = mysql_query($query, $connect))){
 	$tags_split = explode(",",$tags);
 	for ( $i = 0; $i < sizeof($tags_split); $i++ )
 	{
-		$query = "INSERT INTO ct_ScoreTag (refScore, tagBy, tag) VALUES ($ct_score_ref_id, $uploadedBy, '".trim($tags_split[$i])."');";
+		$query = "INSERT INTO CT_ScoreTag (refScore, tagBy, tag) VALUES ($ct_score_ref_id, $uploadedBy, '".trim($tags_split[$i])."');";
 		mysql_query($query, $connect);
 	}
 
 	$_SESSION['success'] = "Upload success!";
 //	echo "DB insert success!<br>";
-	header("Location: mypage.php");
+	header("Location: index.php");
 	exit;
 }
 dbclose();
