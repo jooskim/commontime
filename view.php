@@ -248,7 +248,7 @@ dbclose();
 						</div><br><br><br><br>
 					<div class="scoreDetail">
 					
-						<span class="subTitle">General Information</span><br><div id="scoreimg"></div>
+						<span class="subTitle">General Information</span><br><div id="scoreimg"><img src="'.htmlentities($data["downloadLink"]).'" width=190 height=190></div>
 						<div class="txt">
 							<span class="key">Composer</span><span class="value">'.htmlentities($data["composer"]).'</span><br>
 							<span class="key">Compose Year</span><span class="value">'.htmlentities($data["composeYear"]).'</span><br>
@@ -398,6 +398,8 @@ dbclose();
 								$('#download').html('<img src=assets/images/download.png><br>Reported');
 								$('#download').addClass('inDispute');
 								$('.actions span[id=flag]').remove();
+
+								$('#scoreimg').html('<br><br><br><br><div style=\'color:#FFFFFF;text-align:center;\'>Reported</div>');
 							  </script>");
 					}
 					

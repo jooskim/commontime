@@ -11,17 +11,18 @@ $uploadedBy = $_SESSION['primaryId'];
 // $scoreImage = mysql_real_escape_string($_FILES['txtScoreImage']['name']);
  $target = "assets/scores/"; 
  $target = $target . basename( $_FILES['txtScoreImage']['name'] ) ; 
- $ok=1; 
+ 
  if(move_uploaded_file($_FILES['txtScoreImage']['tmp_name'], $target)) 
  {
- echo "The file ". basename( $_FILES['txtScoreImage']['name']). " has been uploaded<br>";
+ //	echo "The file ". basename( $_FILES['txtScoreImage']['name']). " has been uploaded<br>";
  } 
  else {
- echo "Sorry, there was a problem uploading your file.<br>";
+ //	echo "Sorry, there was a problem uploading your file.<br>";
  }
 
 
 dbconnect();
+
 $title = mysql_real_escape_string($_POST['txtTitle']);
 $composer = mysql_real_escape_string($_POST['txtComposer']);
 $composeYear = mysql_real_escape_string($_POST['txtComposeYear']);
@@ -29,7 +30,7 @@ $opusNumber = mysql_real_escape_string($_POST['txtOpusNumber']);
 $key = mysql_real_escape_string($_POST['txtKey']);
 $language = mysql_real_escape_string($_POST['txtLanguage']);
 $pieceStyle = mysql_real_escape_string($_POST['txtPieceStyle']);
-$copyright = mysql_real_escape_string($_POST['txtCopyright']);
+$isPublic = mysql_real_escape_string($_POST['txtIsPublic']);
 $publishYear = mysql_real_escape_string($_POST['txtPublishYear']);
 $description = mysql_real_escape_string($_POST['txtDescription']);
 
@@ -38,6 +39,7 @@ $instrumentation = mysql_real_escape_string($_POST['txtInstrumentation']);
 $tags = mysql_real_escape_string($_POST['txtTags']);
 
 // check validation
+/*
 echo 'title:'. $title."<br>";
 echo 'composer:'. $composer."<br>";
 echo 'composeYear:'. $composeYear."<br>";
@@ -47,12 +49,12 @@ echo 'key:'. $key."<br>";
 echo 'language:'. $language."<br>";
 echo 'pieceStyle:'. $pieceStyle."<br>";
 echo 'instrumentation:'. $instrumentation."<br>";
-echo 'copyright:'. $copyright."<br>";
+echo 'copyright:'. $isPublic."<br>";
 echo 'publishYear:'. $publishYear."<br>";
 echo 'description:'. $description."<br>";
 echo 'target:'. $target."<br>";
 echo 'tags:'. $tags."<br>";
-
+*/
 
 // check validation
 
@@ -62,17 +64,18 @@ echo 'tags:'. $tags."<br>";
 
 // insert
 
-$query = "INSERT INTO CT_Score (title, isPublic, composer, composeYear, publishYear, description, downloadLink, timestamp, uploadedBy, language, opusNum, `key`) VALUES ('$title', $copyright, '$composer', $composeYear, $publishYear, '$description', '$target', NOW(), $uploadedBy, '$language', '$opusNumber', '$key');";
-echo "<br><br>".$query."<br><br>";
+$query = "INSERT INTO CT_Score (title, isPublic, composer, composeYear, publishYear, description, downloadLink, timestamp, uploadedBy, language, opusNum, `key`) 
+						VALUES ('$title', $isPublic, '$composer', $composeYear, $publishYear, '$description', '$target', NOW(), $uploadedBy, '$language', '$opusNumber', '$key');";
+//echo "<br><br>".$query."<br><br>";
+
 if(!($result = mysql_query($query, $connect))){
-	//$_SESSION['error'] = "DB insert error!";
-	echo "DB insert error!<br>";
-//	header("Location: mypage.php");
+	$_SESSION['error'] = "upload error!";
+//	echo "DB insert error!<br>";
+	header("Location: mypage.php");
+	exit;
 }else{
-//	header("Location: mypage.php");
-	echo "DB insert success!<br>";
 	$ct_score_ref_id = mysql_insert_id();
-	echo $ct_score_ref_id."<br>";
+//	echo $ct_score_ref_id."<br>";
 
 	// Genre
 	$genre_split = explode(",",$genre);
@@ -105,6 +108,11 @@ if(!($result = mysql_query($query, $connect))){
 		$query = "INSERT INTO ct_ScoreTag (refScore, tagBy, tag) VALUES ($ct_score_ref_id, $uploadedBy, '".trim($tags_split[$i])."');";
 		mysql_query($query, $connect);
 	}
+
+	$_SESSION['error'] = "upload success!";
+//	echo "DB insert success!<br>";
+	header("Location: mypage.php");
+	exit;
 }
 dbclose();
 ?>

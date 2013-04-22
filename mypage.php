@@ -277,6 +277,7 @@ if(isset($_POST['loginType'])){
                     <div class="number">0
                     </div>
                 </div>
+                <div>&nbsp;&nbsp;&nbsp;<a href="upload.php">[Upload Score]</a></div>
             </div>
             <div class="myUpload">
                 <span class="myUploadHeader">My Uploads<span class="more"> >> See more</span></span>
@@ -305,7 +306,6 @@ if(isset($_POST['loginType'])){
 						}
 	               	?>
 	            </ul>
-	            <div align="right"><a href="upload.php">upload score</a></div>
             </div>
             <div class="myUpload">
                 <span class="myUploadHeader">My Lists<span class="more"> >> See more</span></span>
