@@ -173,7 +173,7 @@ require_once("functions.php");
 						<span class="subTitle">Music Score Information</span><br>
 						<div class="txt">
 							<table>
-								<tr><td><span class="key">Copyright</span></td><td><input type="radio" name="txtCopyright" id="txtCopyright" value="0">Under Copyright <input type="radio" name="txtCopyright" id="txtCopyright" value="1">Public Domain</td></tr>
+								<tr><td><span class="key">Copyright</span></td><td><span class="value2"><input type="radio" name="txtIsPublic" id="txtIsPublic" value="0">Private <input type="radio" name="txtIsPublic" id="txtIsPublic" value="1">Public</span></td></tr>
 								<tr><td><span class="key">Publish Year</span></td><td><span class="value2"><input type="text" name="txtPublishYear" id="txtPublishYear"></span></td></tr>
 								<tr><td><span class="key">Score Image</span></td><td><span class="value2"><input type="file" name="txtScoreImage" id="txtScoreImage"></span></td></tr>
 								<tr><td><span class="key">Description</span></td><td><span class="value2"><textarea name="txtDescription" id="txtDescription" wrap="physical"></textarea></span></td></tr>

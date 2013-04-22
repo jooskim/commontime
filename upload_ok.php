@@ -97,6 +97,14 @@ if(!($result = mysql_query($query, $connect))){
 		$query = "INSERT INTO ct_style (refScore, style) VALUES ($ct_score_ref_id, '".trim($style_split[$i])."');";
 		mysql_query($query, $connect);
 	}
+
+	// Tags
+	$tags_split = explode(",",$tags);
+	for ( $i = 0; $i < sizeof($tags_split); $i++ )
+	{
+		$query = "INSERT INTO ct_ScoreTag (refScore, tagBy, tag) VALUES ($ct_score_ref_id, $uploadedBy, '".trim($tags_split[$i])."');";
+		mysql_query($query, $connect);
+	}
 }
 dbclose();
 ?>
