@@ -780,6 +780,40 @@ input#keyword {
 
 }
 
+.scoreDetail .txt .value2 {
+	line-height: 10px;
+	border: 0;
+
+}
+
+.scoreDetail .txt .value2 input {
+	color: #455F7B;
+	display: inline-block;
+	line-height: 18px;
+	padding-left: 0px;
+	padding-right: 0px;
+	padding-top: 1px;
+	padding-bottom: 1px;
+	margin-left: 0px;
+	background-color: #EFEFEF;
+	cursor: pointer;
+	width: 650px;
+}
+
+.scoreDetail .txt .value2 textarea {
+	color: #455F7B;
+	display: inline-block;
+	line-height: 18px;
+	padding-left: 0px;
+	padding-right: 0px;
+	padding-top: 1px;
+	padding-bottom: 1px;
+	margin-left: 0px;
+	background-color: #EFEFEF;
+	cursor: pointer;
+	width: 650px;
+}
+
 .commentArea .msgItem {
 	display: inline-block;
 	width: 100%;

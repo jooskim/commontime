@@ -305,6 +305,7 @@ if(isset($_POST['loginType'])){
 						}
 	               	?>
 	            </ul>
+	            <div align="right"><a href="upload.php">upload score</a></div>
             </div>
             <div class="myUpload">
                 <span class="myUploadHeader">My Lists<span class="more"> >> See more</span></span>
