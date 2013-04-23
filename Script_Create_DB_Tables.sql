@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Apr 19, 2013 at 01:40 AM
+-- Generation Time: Apr 22, 2013 at 07:40 PM
 -- Server version: 5.5.25
 -- PHP Version: 5.4.4
 
@@ -131,7 +131,7 @@ CREATE TABLE `CT_Mylist` (
   `title` varchar(50) NOT NULL,
   `timestamp` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=7 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=8 ;
 
 --
 -- Dumping data for table `CT_Mylist`
@@ -140,7 +140,8 @@ CREATE TABLE `CT_Mylist` (
 INSERT INTO `CT_Mylist` (`id`, `creator`, `title`, `timestamp`) VALUES
 (4, 1, 'default mylist', 1366264770),
 (5, 18, 'default mylist', 1366304546),
-(6, 19, 'default mylist', 1366328303);
+(6, 19, 'default mylist', 1366328303),
+(7, 13, 'default mylist', 1366391891);
 
 -- --------------------------------------------------------
 
@@ -178,12 +179,11 @@ CREATE TABLE `CT_Score` (
   `title` varchar(100) NOT NULL,
   `isFlagged` int(11) DEFAULT '0',
   `isPublic` int(11) NOT NULL DEFAULT '0',
-  `genre` varchar(1000) DEFAULT NULL,
   `composer` varchar(200) DEFAULT NULL COMMENT 'foreign key',
   `composeYear` int(11) DEFAULT NULL,
   `publishYear` int(11) DEFAULT NULL,
-  `instrumentation` varchar(50) DEFAULT NULL,
   `description` varchar(4000) DEFAULT NULL,
+  `downloadLink` varchar(4000) DEFAULT 'assets/scores/sample.jpg',
   `downloads` int(11) NOT NULL DEFAULT '0',
   `likes` int(11) DEFAULT '0',
   `likeList` varchar(4000) DEFAULT NULL,
@@ -192,7 +192,6 @@ CREATE TABLE `CT_Score` (
   `language` varchar(45) DEFAULT NULL,
   `opusNum` varchar(45) DEFAULT NULL,
   `key` varchar(45) DEFAULT NULL,
-  `style` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
 
@@ -200,10 +199,10 @@ CREATE TABLE `CT_Score` (
 -- Dumping data for table `CT_Score`
 --
 
-INSERT INTO `CT_Score` (`id`, `title`, `isFlagged`, `isPublic`, `genre`, `composer`, `composeYear`, `publishYear`, `instrumentation`, `description`, `downloads`, `likes`, `likeList`, `timestamp`, `uploadedBy`, `language`, `opusNum`, `key`, `style`) VALUES
-(1, 'Suite for String Orchestra, Op.63', 0, 1, 'Suites, For strings, Scores featuring string ensemble', 'Arthur P. Schmidt', 1909, 1909, 'violins, violas, cellos, bass', '3 movments Praeludium. Pizzicato and Adagietto. Fuge', 5, 3, '', 20130211, 1, 'German', 'Op.63', '12', 1),
-(2, 'Caazapa (Barrios Mangore, Agustin)', 1, 1, '0', 'Barrios Mangore, Agustin', 1952, 1979, 'Guitar', '4 pieces: Primavera Junto a tu corazon in D minor in G major', 12, 3, '', 20130301, 15, 'English', 'Op.8', '2', 1),
-(3, 'Au Clair de la Lune, chante dans Les Voitures Versees, varie, Op.7', 0, 1, 'Variations For guitar', 'Carcassi, Matteo', 1823, 1827, 'guitar', 'Anvers: A. Schott, n.d., plate 2555', 32, 2, '', 20130315, 13, 'German', 'Op.7', '2', 2);
+INSERT INTO `CT_Score` (`id`, `title`, `isFlagged`, `isPublic`, `composer`, `composeYear`, `publishYear`, `description`, `downloadLink`, `downloads`, `likes`, `likeList`, `timestamp`, `uploadedBy`, `language`, `opusNum`, `key`) VALUES
+(1, 'Suite for String Orchestra, Op.63', 0, 1, 'Arthur P. Schmidt', 1909, 1909, '3 movments Praeludium. Pizzicato and Adagietto. Fuge', 'assets/scores/sample.jpg', 5, 3, '', 20130211, 1, 'German', 'Op.63', '12'),
+(2, 'Caazapa (Barrios Mangore, Agustin)', 1, 1, 'Barrios Mangore, Agustin', 1952, 1979, '4 pieces: Primavera Junto a tu corazon in D minor in G major', 'assets/scores/sample.jpg', 12, 3, '', 20130301, 15, 'English', 'Op.8', '2'),
+(3, 'Au Clair de la Lune, chante dans Les Voitures Versees, varie, Op.7', 0, 1, 'Carcassi, Matteo', 1823, 1827, 'Anvers: A. Schott, n.d., plate 2555', 'assets/scores/sample.jpg', 32, 2, '', 20130315, 13, 'German', 'Op.7', '2');
 
 -- --------------------------------------------------------
 
@@ -286,17 +285,19 @@ CREATE TABLE `CT_SearchLog` (
 DROP TABLE IF EXISTS `CT_Style`;
 CREATE TABLE `CT_Style` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `refScore` int(11) NOT NULL,
   `style` varchar(200) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
 
 --
 -- Dumping data for table `CT_Style`
 --
 
-INSERT INTO `CT_Style` (`id`, `style`) VALUES
-(1, 'Romantic'),
-(2, 'Classical');
+INSERT INTO `CT_Style` (`id`, `refScore`, `style`) VALUES
+(1, 1, 'Romantic'),
+(2, 3, 'Classical'),
+(3, 2, 'Romantic');
 
 -- --------------------------------------------------------
 
@@ -328,9 +329,9 @@ CREATE TABLE `CT_User` (
 --
 
 INSERT INTO `CT_User` (`id`, `userEmail`, `userPw`, `firstName`, `middleName`, `lastName`, `level`, `redFlag`, `joinDate`, `lastAccess`, `avatarPic`, `securityQ`, `securityA`, `emailSHA`) VALUES
-(1, 'jooskim@umich.edu', 'https://www.google.com/accounts/o8/id?id=AItOawm1o6xSVvLGw4UU_BOk4mmXzorLm0BWKqM', 'Joosung', NULL, 'Kim', 1, 0, '2013-04-02 01:04:36', '2013-04-18 03:57:41', 'assets/images/joosung.jpg', NULL, NULL, '86165a9e249b9e1be1b7e069ad993dd780593027'),
+(1, 'jooskim@umich.edu', 'https://www.google.com/accounts/o8/id?id=AItOawm1o6xSVvLGw4UU_BOk4mmXzorLm0BWKqM', 'Joosung', NULL, 'Kim', 1, 0, '2013-04-02 01:04:36', '2013-04-19 00:50:24', 'assets/images/joosung.jpg', NULL, NULL, '86165a9e249b9e1be1b7e069ad993dd780593027'),
 (2, 'jsk9260@gmail.com', 'https://www.google.com/accounts/o8/id?id=AItOawmBxU_l8snhjpinBYZD9PG7RiMgPzvVxgY', 'Joosung', NULL, 'Kim', 1, 0, '2013-04-02 01:08:29', '2013-04-15 16:48:56', 'assets/images/profile.jpg', NULL, NULL, 'b751208512ad8f596d12aab1581cead7b0beda52'),
-(13, 'joooo', '202cb962ac59075b964b07152d234b70', 'First', NULL, 'Last', 1, 0, '2013-04-02 22:51:26', '2013-04-18 04:26:05', 'assets/images/profile.jpg', NULL, NULL, 'e686493b86ccd00d63b4248f075c46a226459d9e'),
+(13, 'joooo', '202cb962ac59075b964b07152d234b70', 'First', NULL, 'Last', 1, 0, '2013-04-02 22:51:26', '2013-04-19 17:18:08', 'assets/images/profile.jpg', NULL, NULL, 'e686493b86ccd00d63b4248f075c46a226459d9e'),
 (12, 'asdf', 'bcc95c2d9c99b6eb053cc99aaef00092', 'aweg', NULL, 'geg', 1, 0, '2013-04-02 07:04:21', NULL, 'assets/images/profile.jpg', NULL, NULL, '3da541559918a808c2402bba5012f6c60b27661c'),
 (9, 'asdfe', '202cb962ac59075b964b07152d234b70', 'test1', NULL, 'test2', 1, 0, '2013-04-02 06:58:05', NULL, 'assets/images/profile.jpg', NULL, NULL, '11a9e81eaa229b8379404b9c7d4a1eb08564c692'),
 (14, 'tester', 'f5d1278e8109edd94e1e4197e04873b9', 'tester', NULL, 'Kim', 1, 0, '2013-04-11 15:01:42', '2013-04-11 15:01:42', 'assets/images/profile.jpg', NULL, NULL, 'ab4d8d2a5f480a137067da17100271cd176607a1'),
